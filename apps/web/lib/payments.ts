@@ -7,6 +7,7 @@ import { config } from './config';
 import { SimulatedProvider } from './simulator';
 import { makeQuote } from './catalog';
 import { AppError, executionContext, event } from './domain';
+import { reviewTerms } from './comparison';
 type Operation=Selectable<Database['operations']>;
 type QuoteRow=Selectable<Database['quotes']>;
 const stamp=()=>new Date().toISOString();
@@ -30,26 +31,28 @@ function bindingFor(op:Pick<Operation,'owner_id'|'mission_id'|'id'>,quote:QuoteR
 async function fresh(tx:Tx,mission:Selectable<Database['missions']>,op:Operation,quote:QuoteRow,own:boolean) {
   const approval=await tx.selectFrom('approvals').selectAll().where('id','=',op.approval_id).where('owner_id','=',op.owner_id).executeTakeFirstOrThrow();
   const expected=bindingFor(op,quote,hash(mission.policy));
-  if(approval.status!=='active' || !approvalValid(approval.binding,expected,stamp())) throw new AppError('APPROVAL_STALE');
+  const current=await makeQuote(quote.proposal,tx,{ownReservation:own,original:quote.snapshot,ownerId:op.owner_id});
+  const termsReview=reviewTerms(quote.policy_snapshot,mission.policy,quote.snapshot,current);
+  if(approval.status!=='active' || !approvalValid(approval.binding,expected,stamp()) || !termsReview.valid) throw new AppError('APPROVAL_STALE',409,{termsReview});
   if(op.payment_mode!==config().PAYMENT_MODE || quote.payment_mode!==op.payment_mode) throw new AppError('PAYMENT_MODE_CHANGED');
   if(hash(op.payload)!==op.payload_hash || hash(createPayload(quote.snapshot,op.id,config().APP_ORIGIN))!==op.payload_hash) throw new AppError('PAYLOAD_CHANGED');
-  const current=await makeQuote(quote.proposal,tx,{ownReservation:own,original:quote.snapshot,ownerId:op.owner_id});
   if(basketFingerprint(current)!==basketFingerprint(quote.snapshot)) throw new AppError('APPROVAL_STALE');
   const context=executionContext(mission);
   if(own){context.reserved-=quote.snapshot.total;context.pendingPurchases--;}
   const decision=evaluate(mission.policy,current,context);
   if(!decision.allowed) throw new AppError(decision.reasons[0]);
 }
-export async function approveBasket(ownerId:string,quoteId:string) {
+export async function approveBasket(ownerId:string,quoteId:string,reviewed?:{policyHash:string;quoteHash:string}) {
   return db().transaction().execute(async tx=>{
     const quote=await tx.selectFrom('quotes').selectAll().where('id','=',quoteId).where('owner_id','=',ownerId).executeTakeFirst();
     if(!quote) throw new AppError('NOT_FOUND',404);
     const mission=await tx.selectFrom('missions').selectAll().where('id','=',quote.mission_id).where('owner_id','=',ownerId).forUpdate().executeTakeFirstOrThrow();
-    const existing=await tx.selectFrom('approvals').selectAll().where('quote_id','=',quoteId).executeTakeFirst();
-    if(existing) return {approvalId:existing.id,operationId:existing.operation_id};
     await lockProducts(tx,quote);
     const current=await makeQuote(quote.proposal,tx,{original:quote.snapshot,ownerId});
-    if(basketFingerprint(current)!==basketFingerprint(quote.snapshot) || hash(mission.policy)!==quote.decision.policyHash) throw new AppError('APPROVAL_STALE');
+    const termsReview=reviewTerms(quote.policy_snapshot,mission.policy,quote.snapshot,current);
+    if(!termsReview.valid||reviewed&&(reviewed.policyHash!==hash(mission.policy)||reviewed.quoteHash!==hash(quote.snapshot)))throw new AppError('APPROVAL_STALE',409,{termsReview});
+    const existing=await tx.selectFrom('approvals').selectAll().where('quote_id','=',quoteId).executeTakeFirst();
+    if(existing) return {approvalId:existing.id,operationId:existing.operation_id};
     const decision=evaluate(mission.policy,current,executionContext(mission));
     if(!decision.allowed) throw new AppError(decision.reasons[0]);
     const operationId=randomUUID(),approvalId=randomUUID();

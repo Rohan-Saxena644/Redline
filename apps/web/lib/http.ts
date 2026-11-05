@@ -65,7 +65,7 @@ export function handler(fn:(request:Request)=>Promise<Response>) {
       const code=error instanceof AppError||error instanceof ModelError||error instanceof ProviderError?error.code:error instanceof z.ZodError?'INVALID_REQUEST':'INTERNAL_ERROR';
       const status=error instanceof AppError?error.status:error instanceof z.ZodError?400:error instanceof ModelError||error instanceof ProviderError?502:500;
       console.error(JSON.stringify({correlationId,code,status,durationMs:Date.now()-started,...modeLabels()}));
-      return Response.json({error:code,correlationId},{status,headers:{'X-Correlation-ID':correlationId,'Cache-Control':'no-store'}});
+      return Response.json({error:code,correlationId,...(error instanceof AppError&&error.details?{details:error.details}:{})},{status,headers:{'X-Correlation-ID':correlationId,'Cache-Control':'no-store'}});
     }
   };
 }
