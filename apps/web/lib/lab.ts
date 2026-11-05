@@ -34,10 +34,10 @@ async function executeScenario(ownerId:string,scenario:typeof scenarios[number],
   const {operationId}=await approveBasket(ownerId,recorded.quote.id);
   if(scenario==='price_change') {
     await db().updateTable('products').set(eb=>({price:eb('price','+',100),version:eb('version','+',1)})).where('sku','=',proposal.items[0].sku).where('lab_owner_id','=',ownerId).execute();
-    let code='UNEXPECTED_ALLOW';try{await executePurchase(ownerId,operationId);}catch(error){code=error instanceof AppError?error.code:'ERROR';}
-    await event(db(),mission.id,operationId,'approval_invalidated','An isolated product price changed after approval; execution was blocked.',{code});
+    let code='UNEXPECTED_ALLOW',termsReview:unknown=null;try{await executePurchase(ownerId,operationId);}catch(error){code=error instanceof AppError?error.code:'ERROR';termsReview=error instanceof AppError?error.details?.termsReview??null:null;}
+    await event(db(),mission.id,operationId,'approval_invalidated',code==='APPROVAL_STALE'?'An isolated product price changed after approval; execution was blocked.':'The price-change scenario returned an unexpected result.',{code,termsReview});
     await cancelPurchase(ownerId,operationId);
-    return {...base,operationId,rule:'Execution must match the exact approved financial and product facts.',result:code};
+    return {...base,operationId,rule:'Execution must match the exact approved financial and product facts.',result:code,termsReview};
   }
   if(scenario==='concurrency') {
     const results=await Promise.all([executePurchase(ownerId,operationId),executePurchase(ownerId,operationId)]);
@@ -66,7 +66,7 @@ export async function runLab(ownerId:string,scenario:typeof scenarios[number],re
     if('providerOrders' in result.result)matchedExpectation=result.result.providerOrders===1;
     if('afterResponseLoss' in result.result)matchedExpectation=result.result.afterResponseLoss==='UNKNOWN'&&result.result.afterReconciliation==='COMPLETED'&&result.result.captures===1;
   }
-  const evidence=await saveEvidence(ownerId,{scenarioId:scenario,missionId:result.missionId,quoteId,operationId,inputMode:realModel?'real':'scripted',paymentMode:config().PAYMENT_MODE,providerUse:['concurrency','response_loss'].includes(scenario)?'simulated':'not_called',expectedConstraint:expectedConstraints[scenario],observed:result.result,matchedExpectation,outcome:'observed'});
+  const evidence=await saveEvidence(ownerId,{scenarioId:scenario,missionId:result.missionId,quoteId,operationId,inputMode:realModel?'real':'scripted',paymentMode:config().PAYMENT_MODE,providerUse:['concurrency','response_loss'].includes(scenario)?'simulated':'not_called',expectedConstraint:expectedConstraints[scenario],observed:'termsReview' in result?{result:result.result,termsReview:result.termsReview}:result.result,matchedExpectation,outcome:'observed'});
   await event(db(),result.missionId,operationId,'scenario_verified','Scenario execution recorded; provenance and observed result are available for inspection.',{evidenceId:evidence.id,scenarioId:scenario,inputMode:evidence.inputMode,paymentMode:evidence.paymentMode,providerUse:evidence.providerUse});
   return {...result,evidence};
 }
