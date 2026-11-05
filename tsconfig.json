@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["ES2022", "DOM", "DOM.Iterable"], "types":["node","react","react-dom"], "module": "ESNext", "moduleResolution": "Bundler",
+    "strict": true, "noEmit": true, "esModuleInterop": true, "skipLibCheck": true, "resolveJsonModule": true, "jsx": "react-jsx", "ignoreDeprecations":"6.0",
+    "paths": {"@redline/policy": ["./packages/policy/src/index.ts"], "@redline/paypal": ["./packages/paypal/src/index.ts"]}
+  },
+  "include": ["packages/**/*.ts", "apps/**/*.ts", "apps/**/*.tsx", "scripts/**/*.ts", "migrations/**/*.ts", "tests/**/*.ts", "*.ts"],
+  "exclude": ["node_modules", "**/dist", "**/.next"]
+}

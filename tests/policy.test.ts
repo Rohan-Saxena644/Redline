@@ -1,0 +1,21 @@
+import { describe,it,expect } from 'vitest';
+import { createHash } from 'node:crypto';
+import { evaluate,decimal,fromDecimal,sha256,canonical,hash,basketFingerprint,approvalValid,type Policy,type Quote } from '@redline/policy';
+import { snapshot } from './fixtures';
+describe('portable policy SDK',()=>{
+  it('matches SHA-256 standard vectors and canonicalizes key order',()=>{
+    for(const value of ['', 'abc', 'REDLINE 🎙️', 'a'.repeat(1000)])expect(sha256(value)).toBe(createHash('sha256').update(value).digest('hex'));
+    expect(hash({b:2,a:1})).toBe(hash({a:1,b:2}));expect(()=>canonical({a:undefined})).toThrow();
+  });
+  it('serializes exact decimal money without floating point',()=>{expect(decimal(12363)).toBe('123.63');expect(fromDecimal('0.01')).toBe(1);expect(fromDecimal('1000000.00')).toBe(100000000);});
+  it.each([-1,NaN,Infinity,1.5,Number.MAX_SAFE_INTEGER])('rejects invalid minor units %s',value=>expect(()=>decimal(value)).toThrow());
+  it.each(['1','1.0','01.00','1e2','-1.00','0.001','1000000.01','99999999.00'])('rejects malformed/excessive decimals %s',value=>expect(()=>fromDecimal(value)).toThrow());
+  it('allows exact boundary and denies one cent less including shipping and tax',()=>{const {policy,quote,context}=snapshot();policy.maxTotal=quote.total;expect(evaluate(policy,quote,context).allowed).toBe(true);policy.maxTotal--;expect(evaluate(policy,quote,context).reasons).toContain('BUDGET_EXCEEDED');});
+  it('accounts for spent and reserved cumulative budget and purchase capacity',()=>{const {policy,quote,context}=snapshot();context.reserved=3000;context.pendingPurchases=1;const d=evaluate(policy,quote,context);expect(d.reasons).toEqual(expect.arrayContaining(['BUDGET_EXCEEDED','PURCHASE_LIMIT_REACHED']));});
+  it('blocks recurring, unknown, unauthorized and unavailable products',()=>{const {policy,quote,context}=snapshot();quote.lines[0].billingType='recurring';quote.lines[0].known=false;quote.lines[0].available=false;policy.allowedProductIds=['hp'];expect(evaluate(policy,quote,context).reasons).toEqual(expect.arrayContaining(['BILLING_TYPE_NOT_ALLOWED','UNKNOWN_PRODUCT','PRODUCT_NOT_ALLOWED','PRODUCT_UNAVAILABLE','REQUIRED_CATEGORY_MISSING']));});
+  it('blocks policy and quote expiry at the exact instant',()=>{const {policy,quote,context}=snapshot();policy.expiresAt=context.now;quote.expiresAt=context.now;expect(evaluate(policy,quote,context).reasons).toEqual(expect.arrayContaining(['POLICY_EXPIRED','QUOTE_EXPIRED']));});
+  it('enforces merchant, owner, currency, category and quantity',()=>{const {policy,quote,context}=snapshot();quote.merchantId='other';context.ownerId='other';quote.currency='EUR' as 'USD';policy.maxQuantity=1;quote.lines[0].quantity=2;quote.subtotal+=5900;quote.total+=5900;quote.lines[1].category='accessory';expect(evaluate(policy,quote,context).reasons).toEqual(expect.arrayContaining(['MERCHANT_NOT_ALLOWED','OWNER_MISMATCH','CURRENCY_NOT_ALLOWED','QUANTITY_LIMIT_EXCEEDED','REQUIRED_CATEGORY_MISSING']));});
+  it('fails closed on tampered totals, negative quantities and unbounded inputs',()=>{const {policy,quote,context}=snapshot();for(const mutation of [(q:Quote)=>{q.total--;},(q:Quote)=>{q.lines[0].quantity=-1;},(q:Quote)=>{q.lines[0].quantity=1e20;}]){const q=structuredClone(quote);mutation(q);expect(evaluate(policy,q,context).reasons).toContain('INVALID_INPUT');}expect(evaluate(null as unknown as Policy,quote,context).allowed).toBe(false);});
+  it('replays blocked decisions byte-for-byte from snapshots',()=>{const {policy,quote,context}=snapshot();policy.maxTotal=12000;expect(canonical(evaluate(policy,quote,context))).toBe(canonical(evaluate(structuredClone(policy),structuredClone(quote),structuredClone(context))));});
+  it('binds every financial/product fact and exact approval lifecycle',()=>{const {quote}=snapshot();const binding={ownerId:'owner',missionId:'mission',operationId:'op',policyHash:'p',quoteHash:'q',basketHash:basketFingerprint(quote),expiresAt:quote.expiresAt};expect(approvalValid(binding,binding,'2026-11-05T00:00:00Z')).toBe(true);expect(approvalValid(binding,{...binding,operationId:'another'},'2026-11-05T00:00:00Z')).toBe(false);expect(approvalValid(binding,binding,quote.expiresAt)).toBe(false);quote.tax++;expect(basketFingerprint(quote)).not.toBe(binding.basketHash);});
+});

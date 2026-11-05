@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+**/.next
+**/dist
+.cache
+.local
+.env
+.env.*
+!.env.example
+.git
+test-results
+playwright-report
+coverage
+*.log
