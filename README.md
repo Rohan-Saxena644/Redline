@@ -10,6 +10,8 @@ An experimental open-source TypeScript policy SDK and a complete local purchasin
 
 Requirements: Node **22.16–24.x**, npm **10+**, Docker Compose, available ports 3000 and 54329. The lockfile pins the tested dependency graph. PowerShell users should use `npm.cmd` if script execution policy blocks `npm.ps1`; the commands below otherwise work with `npm`.
 
+For judge/public-repository setup, clone the actual authorized repository URL at the submission manifest's source commit, enter its checkout directory, then run the commands below. Credentials are deliberately absent from the repository. Follow [the real-workflow access path](docs/ACCESS_CONTINUITY.md) to configure an approved model and your authorized PayPal sandbox accounts; defaults alone demonstrate fixtures/simulation only.
+
 ```sh
 npm ci
 docker compose up -d db
@@ -23,6 +25,8 @@ npm run dev
 Open **http://localhost:3000** and select **Enter local workspace**. Defaults are explicitly **fixture proposals** and **simulated payments**. No credentials or network services are needed beyond local PostgreSQL for this mode. A simulated completion is never a PayPal sandbox transaction.
 
 Confirm the mission's editable rules, generate the first fixture proposal (blocked at $156.03), inspect its decision, find the $123.63 alternative, approve its exact basket, create a simulated order, simulate buyer approval, verify/capture, download the receipt and replay it. The real agent can also be run once approved access is configured. You can select catalogue products manually; these are labeled scripted proposals.
+
+The repair panel shows the rejected and replacement baskets side by side, including additions/removals, quantities, all charges, resolved constraints and required categories. The confirmed policy stays fixed through repair. **Edit confirmed policy** is an explicit user action: it creates a new version, invalidates old approvals and preserves cumulative spending. Resolve pending payments before editing. Price/term changes return a structured old/current comparison; stale tabs cannot approve an outdated snapshot. No mission is forced to succeed.
 
 `npm run dev` reads the root `.env` through Next's configured environment loader. CLI commands use `dotenv/config`. No `.env` is required for the safe defaults. Never put private values into `NEXT_PUBLIC_*` variables.
 
@@ -61,6 +65,7 @@ For the optimized local application: `npm run build`, then `npm run start -w @re
 | `migrations` | Committed Kysely migrations; persistent constraints and state |
 | `scripts` | Seed, migrate, bounded reconciliation batch, live checks and package verification |
 | `examples/consumer` | Offline SDK consumer using only the packed public package |
+| `examples/host-integration.ts` | Complete host contract using the existing protected services; exercised against PostgreSQL in integration tests |
 | `tests` | Vitest policy/provider/agent tests, PostgreSQL concurrency tests, Playwright workflows |
 | `docs` | Architecture, state machine, threat model, setup, operations and hackathon materials |
 
@@ -73,3 +78,5 @@ These properties assume all payments use this server path, PostgreSQL durability
 The reference login is for local development. A remote deployment must disable `DEV_LOGIN` and `LOCAL_LAB`, configure a trusted identity gateway, use HTTPS and keep the origin inaccessible directly. See [threat model and readiness gaps](docs/THREAT_MODEL.md), [architecture](docs/ARCHITECTURE.md), [state and recovery](docs/STATE_MACHINE.md), [operations and deployment](docs/OPERATIONS.md).
 
 MIT license. Experimental API. Contributions: [CONTRIBUTING.md](CONTRIBUTING.md). No packages, repository, application or hackathon submission were published by this implementation.
+
+Submission preparation: [access continuity through the announcement](docs/ACCESS_CONTINUITY.md), [2:40 video script](docs/DEMO_SCRIPT.md), [freeze/preservation procedure](docs/SUBMISSION_FREEZE.md). After committing a reviewed clean tree, `npm run submission:manifest` records its source commit, lockfile hash, package versions and external configuration names without values. It creates a local candidate record only; it does not publish, submit or freeze external materials.

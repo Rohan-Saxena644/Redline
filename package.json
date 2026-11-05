@@ -24,7 +24,8 @@
     "db:seed": "tsx scripts/seed.ts",
     "reconcile": "tsx scripts/reconcile.ts",
     "verify:package": "node scripts/verify-package.mjs",
-    "verify:live": "tsx scripts/verify-live.ts"
+    "verify:live": "tsx scripts/verify-live.ts",
+    "submission:manifest": "node scripts/submission-manifest.mjs"
   },
   "dependencies": {
     "dotenv": "18.0.9",

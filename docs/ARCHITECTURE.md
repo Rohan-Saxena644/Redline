@@ -24,7 +24,7 @@ Verified GET evidence / verified webhook + GET → durable settlement → receip
 
 ## Authority
 
-The free-form mission is guidance. The user explicitly confirms editable fields: maximum cumulative total, successful purchase capacity, quantities, required categories, optional explicit SKUs and expiry. Merchant, currency and billing type are fixed enforced fields. Policies are immutable in the reference application: changing the mission/rules creates a new mission and leaves the old mission's ledger and approvals intact. New mission creation requires another explicit user confirmation; the model has no such action.
+The free-form mission is guidance. The user explicitly confirms editable fields: maximum cumulative total, successful purchase capacity, quantities, required categories, optional explicit SKUs and expiry. Merchant, currency and billing type are fixed enforced fields. Each confirmed policy version is immutable in historical quote snapshots. **Edit confirmed policy** requires explicit reconfirmation, increments the same mission's policy version and revokes prior active approvals. Spent/purchase counters are preserved. Pending/reserved payments must be resolved before revision; cancelled pre-capture operations remain recorded. A compare-and-swap policy hash rejects a stale editor. The model has no policy-edit action.
 
 The model receives no payment tool, approval tool, arbitrary URL tool, credentials or mutable policy reference. Structured JSON selects `searchCatalog`, `inspectProduct` or `proposeBasket`. Server-side tools validate parameters and resolve the controlled catalogue. Proposals contain only SKU/quantity and an optional short explanation. Prices, merchant, URLs and unsupported fields are rejected. Catalogue descriptions are untrusted text; React escapes them. The SDK's independent metadata check remains authoritative even if a model follows an injected instruction.
 
@@ -45,6 +45,16 @@ The internal `applyEvidence` function is trusted server code. It is not an API e
 Receipts select redacted fields explicitly: original policy/quote/context, proposal, checks, approval lifecycle/hash, provider references/status and timestamped events. They omit OAuth tokens, credentials, payer details, addresses, raw provider responses, session tokens and unnecessary mission prose. IDs are opaque pseudonymous references. Events may contain supplied token usage; no monetary inference costs are invented. Receipts are unsigned, ordinary application records. They are not tamper-proof audit storage.
 
 Replay checks the recorded evaluator version and reruns `evaluate` with original time/counters. It never reserves funds, invokes a model or calls PayPal. Changing today's clock or ledger does not change historical replay. Only `redline/0.1.0` is available in this release; version mismatch fails explicitly.
+
+## Repair and approval differences
+
+Rejected/replacement quotes have a durable `replaces_quote_id` link. Repairs are recorded under the same expected confirmed-policy hash; revision during an in-flight model call rejects the old result instead of evaluating it under silently changed instructions. Each replacement resolves a fresh merchant quote. The comparison derives item additions/removals, quantity/price/attribute changes, all charge amounts, resolved reason codes and category coverage from recorded structured snapshots. Resolved violations are claimed only for identical policy hashes. Qualitative product-performance equivalence is not invented.
+
+Browser approval submits the policy/quote hashes actually displayed. Server checks those references along with fresh authoritative terms, so an outdated tab cannot approve an earlier version. A stale execution returns structured approved/current quote differences and policy-version/expiry facts; the UI renders those facts directly. Reconciliation of an already dispatched payment continues using its original operation and approval snapshot, even if today's quote differs.
+
+Executed lab scenarios persist owner-scoped evidence records: run/scenario IDs, actual input and provider provenance (including **provider not called** for policy-only checks), expected constraint, observed result, timestamp and application version. Empty scenario cards are descriptions, not preclaimed results. Evidence can be downloaded independently and is included in a linked decision receipt. No injection-blocking rate is derived from these examples.
+
+`examples/host-integration.ts` demonstrates the complete existing host contract in separate propose/review, authenticated approval, buyer-approved capture and reconciliation stages. It wraps current services rather than creating another execution system. The pure package consumer remains separate and offline.
 
 ## Modes
 

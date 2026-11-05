@@ -19,6 +19,14 @@ Policy evaluation alone does not reserve. Create claim atomically checks and inc
 
 Approval/policy/quote expiry prevents initiating new captures. Expiry never discards an unresolved operation or proves payment failed. Evidence of an already completed payment must still settle after expiry. Financial/catalogue changes invalidate new execution. A pending pre-capture operation can be locally cancelled, then a fresh quote explicitly approved; an ambiguous capture cannot be cancelled to recover budget.
 
+## Cancellation, expiry and policy-revision races
+
+The durable transaction claim is the local cancellation cutoff, conservatively before the network request. Capture checks current approval/quote/policy and commits CAPTURING plus capture identity before sending. Cancellation and policy revision serialize through the mission lock. If cancellation commits first, capture cannot claim. If capture claims first, cancellation is refused even if the process has not yet sent the request; the operation retains its identity/reservation and must be reconciled. A lost process in that gap is deliberately ambiguous, not proof that cancellation is safe.
+
+Expiry is checked when a new mutation is claimed; it cannot retract a request dispatched under valid terms. If expiry occurs while PayPal is handling that request, its verified completed outcome still settles once. The same rule applies to an external catalogue price change after dispatch: the approved immutable payload is not rewritten, and local cancellation cannot undo a remote capture.
+
+Explicit policy revision is rejected while any mission reservation/pending count exists. Resolve or safely cancel the pre-capture operation first. Otherwise revision increments the same mission version under compare-and-swap, revokes active approvals and locally cancels unexecuted APPROVED operations. Spent amounts and successful purchase counts never reset. A stale browser or agent result cannot revive an earlier policy version. Ordinary local cancellation does not call a provider order-cancel endpoint and does not promise to stop an external administrator from acting outside REDLINE.
+
 ## Request IDs and retention
 
 Create and capture each persist a distinct UUID before mutation. The create UUID is bound to the stored payload hash; capture is bound to the immutable order and empty capture request. Never repurpose these keys. Concurrent local requests cannot dispatch a second independent mutation for the same phase.

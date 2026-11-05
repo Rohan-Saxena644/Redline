@@ -1,6 +1,6 @@
 # Verification record
 
-Implementation verification date: **2026-11-05 (Asia/Kolkata)**. No secrets were printed or committed. This is a bounded local engineering verification record, not certification.
+Latest refinement verification: **2026-11-06 (Asia/Kolkata)**; original implementation verified November 5. No secrets were printed or committed. This is a bounded local engineering verification record, not certification.
 
 | Check | Actual evidence |
 | --- | --- |
@@ -8,9 +8,9 @@ Implementation verification date: **2026-11-05 (Asia/Kolkata)**. No secrets were
 | PostgreSQL | Real PostgreSQL 17 container via Docker Compose; app `redline` and isolated `redline_test` databases; all committed migrations and 24-product seed executed |
 | Type check | `npm run typecheck` passed |
 | Lint | `npm run lint` passed |
-| Unit suite | `npm test`: **33 passed** across portable policy/money, provider validation and model boundary tests |
-| Integration suite | `npm run test:integration`: **43 passed** against real PostgreSQL; payment/model test doubles explicitly injected |
-| Browser suite | `npm run test:browser`: **8 passed** using installed Microsoft Edge, desktop and iPhone-sized Chromium emulation; fixture proposals and simulated payments |
+| Unit suite | `npm test`: **36 passed** across portable policy/money, provider/model boundary and structured comparison tests |
+| Integration suite | `npm run test:integration`: **54 passed** against real PostgreSQL; payment/model test doubles explicitly injected; includes policy revision/races, repair/evidence and complete host integration |
+| Browser suite | `npm run test:browser`: **12 passed** using installed Microsoft Edge, desktop and iPhone-sized Chromium emulation; fixture proposals and simulated payments; includes stale-tab policy revision and exact approval-change evidence |
 | Accessibility | Axe WCAG 2 A/AA and 2.1 AA checks on welcome, policy editor, allowed purchase workspace, lab and developer views at desktop/mobile sizes; automated checks passed. This is not a complete manual accessibility audit |
 | Visual QA | Desktop/mobile screenshots inspected; responsive overflow checked in browser tests; original code-native vector product illustrations |
 | Package archive | `npm run verify:package`: built SDK, locally packed archive, offline isolated consumer install, public ESM/CJS exports, TypeScript declarations and deterministic blocked replay passed; zero SDK runtime dependencies |
@@ -41,3 +41,15 @@ No sandbox client ID, client secret or merchant ID was supplied. OAuth authentic
 The current hackathon overview/rules/resources, PayPal Orders v2 endpoint docs and JSON specification, general idempotency reference, webhook verification docs, PayPal AI Toolkit, current Kysely migrations and official OpenAI Chat Completions schema were inspected. Links and consequences are recorded in `INTEGRATIONS.md`, `STATE_MACHINE.md` and `SUBMISSION_CHECKLIST.md`. Both payment mutations document request-ID support; the current endpoint references did not establish a retention duration. Automatic mutation retries are therefore disabled rather than assuming an undocumented safe window.
 
 Before submission: independently verify eligibility/current rules, complete actual AI/sandbox evidence, record a <3-minute working demo, authorize/publicize the repository/video if desired, and manually submit. Public deployment is optional under the checked rules. None of these publication/submission steps was performed.
+
+## Refinement verification
+
+The scripted $156.03 shipping rejection is linked to a $123.63 replacement under the same confirmed policy hash; side-by-side UI and receipt comparison show item changes, all charges and required categories. Low-budget fixture repair remains blocked without changing policy. No claim is made that this fixture is a live model failure.
+
+Explicit policy reconfirmation increments the same mission version, preserves spent/purchase counters, revokes prior approvals, rejects a stale editor, and prevents an old in-flight proposal from being rebound to changed instructions. A concurrent approval/revision test verifies serialization. The capture race test holds a provider response open and verifies cancellation/policy edits are refused after capture claim.
+
+The price-change scenario uses isolated owner-scoped inventory and reports the actual approved total $123.63 versus current $124.71 with structured unit-price/charge differences; no provider call is made for that scenario. Evidence records persist across page reloads and reject another owner. Scenario input/provider mode, expected and observed result, timestamp and application version are exported, including **provider not called** when applicable.
+
+`examples/host-integration.ts` was executed in a PostgreSQL integration test through authoritative quote resolution, separate exact approval, the existing protected service, simulated buyer approval/capture and reconciliation. The original packed policy consumer was reverified offline; no second execution framework was created.
+
+`npm run verify:live` was run again: model endpoint/model/access approval and PayPal sandbox client ID/secret/merchant ID remain missing. Real inference, sandbox create/buyer approval/capture and webhook delivery remain **not verified**. Stable zero-spend real-model access/expiry/quota is **not established**; see `ACCESS_CONTINUITY.md`. The 2:40 recording script, candidate manifest procedure and preservation checklist are prepared, with no uploaded footage, deployment or external freeze.

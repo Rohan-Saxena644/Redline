@@ -1,0 +1,35 @@
+# Access continuity through the winner announcement
+
+Last reviewed **2026-11-06, Asia/Kolkata**. The project owner relayed an organizer email asking that demo access, test credentials and trials/credits remain active through December 21. The email itself was not accessed. The [official rules](https://paypalaihackathon.devpost.com/rules) currently place the announcement on or around **December 21, 2026, 2 PM Pacific** (**December 22, 3:30 AM IST**). Preserve access through the actual announcement, including any announced delay. This document does not assert that an unknown trial or quota will last.
+
+## Actual dependencies and access status
+
+| Dependency | Why the real workflow needs it | Verified access | Expiry / quota knowledge | Unresolved risk and supported alternative |
+| --- | --- | --- | --- | --- |
+| Node 22.16–24.x, npm, pinned packages | Build/run the web app and SDK | Local build/tests and packed consumer verified | No application trial; installation needs registry access | Preserve lockfile and install dependencies before judging; no new runtime service implied |
+| PostgreSQL 17 / Docker | Durable policies, approvals, reservations, evidence and reconciliation | Local real PostgreSQL verified | Local persistent volume; availability depends on owner machine/storage | Keep backups and test restore; judges may run their own local Compose database |
+| Configured real model endpoint and model | Actual catalogue actions and proposal/repair | **Not verified; no approved endpoint/key/model configured** | Credits, limits, expiry, free-tier stability and retention are **unknown** | **Stable zero-spend real-model access is not established.** Use an already approved zero-spend endpoint if available, or an explicitly configured existing user-run local model server. Do not download a model automatically, upgrade, buy credits or assume free access |
+| PayPal sandbox REST app, merchant and personal buyer | Real sandbox create → buyer approval → capture → retrieval | **Not verified; sandbox credentials absent** | Account/app status and limits not checked; no access-continuity promise | Judges can use their own authorized sandbox accounts and app. If owner-supplied test access is necessary, distribute only through an approved private channel, never the public repository |
+| Public HTTPS app + trusted identity gateway | Only needed for a shared hosted demo | None deployed or verified | No hosting trial or quota has been established | Reproducible local setup is supported. Do not create paid resources or publish without authorization |
+| Public webhook listener + sandbox registration | Needed only to demonstrate live webhook delivery | Not verified; no registration configured | URL reachability and webhook ID lifetime unknown | Local checkout can use explicit authoritative reconciliation; do not claim webhook delivery when it was not observed |
+| Repository/video/linked materials | Judge access to source, instructions and functioning demo footage | Local source and scripts exist; no publication performed in this task | Public links and their permissions do not exist yet | Publish only after authorization, then verify logged-out access and preserve the exact submitted references |
+
+Fixture proposals and simulated payments are useful supported walkthroughs. They **do not replace the required real AI + PayPal sandbox demonstration**, and must never silently take over after a real request fails. AI and payment modes are independent and visible in UI/logs/receipts.
+
+## Judge-run real workflow
+
+1. Clone the authorized public repository at the submission manifest's source commit and follow the README setup. Keep the original lockfile; run migrations and seed against a fresh local database. Use `http://localhost:3000`, not another origin.
+2. Copy `.env.example` privately to `.env`. Configure an authorized sandbox app/merchant and an approved compatible model endpoint/model. Use server-only keys. Set `PAYMENT_MODE=sandbox`, `AI_MODE=real` and `AI_ACCESS_APPROVED=true`; use `AI_ALLOW_LOCAL=true` only for an explicitly configured existing loopback model server. See `INTEGRATIONS.md` for exact field names and compatibility limits.
+3. Run `npm run verify:live`: this tests one real structured action when configured and PayPal authentication. It does not prove checkout or webhook delivery. Keep its redacted local result privately; no fixture fallback occurs.
+4. In the app, explicitly confirm the streaming policy. Run the real agent. If it immediately proposes a compliant basket, show that fact; use a clearly labeled scripted shipping scenario for the blocked boundary. Review the same-policy repair comparison when there is a rejected/replacement pair.
+5. Approve the exact basket, create the sandbox order, use the sandbox personal buyer account for separate PayPal approval, then verify/capture server-side. Only verified provider capture evidence is completion. Download the actual receipt and replay the policy decision without payment.
+6. If the provider result is uncertain, retain the operation and reservation and check that same order. Do not create a replacement payment or release capacity to make the demonstration appear successful.
+
+## Owner continuity checklist
+
+- Assign a human access owner before submission. Record the real model/account access expiry and quotas privately after verification; do not mark unknown values as unlimited.
+- Establish zero-spend real-model access for the full judging period or explicitly flag the unresolved risk to the project owner. An existing local model endpoint is supported only after compatibility and resource availability are actually tested. No provider/free tier is recommended or assumed here.
+- Keep the sandbox REST app, merchant and buyer accounts usable. Avoid credential rotation during judging unless security requires it; if necessary, rotate privately, restart, reverify, and preserve submitted source/materials. No secrets belong in public issues or commits.
+- For authorized hosting, keep HTTPS, identity gateway, database, origin restrictions and reconciliation scheduler operating; verify judge sign-in and linked URLs without relying on the owner's browser session. No deployment is currently available.
+- Perform private readiness/access checks before the deadline and during judging. Record actual results, date, source commit and unresolved limits. These checks are manual; this repository has not created a calendar reminder, monitor, subscription or external notification.
+- Do not spend, upgrade plans, extend a paid trial or change submitted materials automatically. If access expires, surface the failure honestly and seek an authorized remedy. Preserve materials until the actual announcement as described in `SUBMISSION_FREEZE.md`.

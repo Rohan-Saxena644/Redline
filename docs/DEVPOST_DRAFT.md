@@ -12,9 +12,13 @@ REDLINE pairs an experimental TypeScript policy SDK with a complete reference pu
 
 Every decision can be downloaded as a redacted receipt containing policy/quote snapshots, exact checks, evaluator version, approval lifecycle and provider references. Replay reproduces policy checks without performing a payment. Six labeled adversarial scenarios exercise shipping overrun, recurring products, catalogue injection, price change, concurrent requests and remote capture response loss.
 
+The main product story is visible repair: a rejected basket appears next to its replacement with exact changes and charges. A replacement is re-evaluated against the same confirmed policy and fresh merchant quote; categories and billing restrictions cannot be silently weakened. Explicit user edits create a new policy version and invalidate prior active approvals without resetting spending. Approved/current price changes are shown from structured server differences. Executed scenarios have timestamped downloadable evidence; the application makes no universal injection-security claim.
+
 ## How we built it
 
 A TypeScript npm workspace: a dependency-free portable evaluator, server-only PayPal sandbox REST adapter, Next.js/React/Tailwind interface, Zod boundaries, PostgreSQL and Kysely migrations. The configured OpenAI-compatible agent has catalogue tools and at most three proposals/eight actions. It receives no payment credentials or execution tool. Separate fixture AI and simulated payment modes make tests reproducible without impersonating real integrations.
+
+The developer kit's complete host example reuses authoritative quote resolution, exact approval persistence, the protected payment service and reconciliation. The SDK alone does not claim authentication, locking or payment guarantees. Access continuity, a local source/version manifest and a post-deadline preservation checklist are prepared, but stable zero-spend real-model access is unresolved.
 
 Approval binds the exact policy, quote, owner, merchant/payee, total and operation. PostgreSQL locks reserve cumulative funds and stock before network calls. Stable mutation intent survives crashes. Ambiguous outcomes keep reservations and reconcile against the same known order. Verified PayPal webhook delivery triggers authoritative retrieval; duplicate/stale events cannot settle twice or downgrade completion.
 

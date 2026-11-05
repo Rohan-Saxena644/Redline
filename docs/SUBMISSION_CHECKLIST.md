@@ -16,5 +16,8 @@ The posted deadline is **November 12, 2026, 12:00 PM PST**, which is **November 
 - [ ] Confirm authorization and license/terms for each third-party integration or asset. Sponsor tools are optional; check additional terms if seeking sponsor-specific prizes.
 - [ ] Review judging dimensions: implementation, coherent design, specific impact, idea differentiation and clear functioning demonstration. Do not invent novelty, benchmarks, audits or saved-revenue claims.
 - [ ] Enter all required form fields and exact repository/video/demo links, accept rules as appropriate, and submit before the deadline **only after separate authorization**.
+- [ ] Generate the local source/version manifest from a clean reviewed commit, then commit that metadata separately; see `SUBMISSION_FREEZE.md`.
+- [ ] Resolve the access risks in `ACCESS_CONTINUITY.md`, especially currently unestablished zero-spend real-model access. Keep required accounts/quotas/credentials usable through the actual December announcement.
+- [ ] After submission, preserve the exact repository commit, video and linked materials unchanged through the announcement; operational access maintenance does not authorize behavior/material changes.
 
 Production money, paid resources/subscriptions, public deployment, package publication, repository publication and hackathon submission were not authorized as part of implementation. Manual credential configuration, eligibility review, actual live verification, recording and publication/submission remain entrant steps.
