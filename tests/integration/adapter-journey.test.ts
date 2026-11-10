@@ -6,7 +6,8 @@ import {PayPalSandbox,type CreatePayload,type OrderEvidence} from '@redline/payp
 import {migrate} from '../../scripts/migrate';
 import {seed} from '../../scripts/seed';
 import {db,closeDb} from '../../apps/web/lib/db';
-import {createMission,ownedMission} from '../../apps/web/lib/domain';
+import {createMission,ownedMission,recordProposal} from '../../apps/web/lib/domain';
+import {verifyCapturedQuote} from '../../apps/web/lib/capture-verification';
 import {runAgent,CompatibleModel} from '../../apps/web/lib/agent';
 import {approveBasket,executePurchase,capturePurchase} from '../../apps/web/lib/payments';
 import {receipt,replay} from '../../apps/web/lib/receipts';
@@ -69,6 +70,7 @@ it('runs model HTTP fixtures through rejection, fixed-policy repair, exact appro
     return Response.json(evidence);
   });
   expect((await executePurchase(owner,operationId,provider)).state).toBe('AWAITING_BUYER');
+  await expect(verifyCapturedQuote(result.quoteId!,provider)).rejects.toThrow('COMPLETED_CAPTURE_REQUIRED');
   await expect(capturePurchase(owner,operationId,provider)).rejects.toThrow('BUYER_APPROVAL_REQUIRED');expect(captures).toBe(0);
   buyerApproved=true;expect((await capturePurchase(owner,operationId,provider)).state).toBe('COMPLETED');
   await capturePurchase(owner,operationId,provider);expect({creates,captures}).toEqual({creates:1,captures:1});
@@ -76,4 +78,27 @@ it('runs model HTTP fixtures through rejection, fixed-policy repair, exact appro
   expect((await receipt(owner,result.quoteId!)).provider).toMatchObject({orderId:'FIXTUREORDER1',captureId:'FIXTURECAPTURE1',operationState:'COMPLETED'});
   expect(await replay(owner,result.quoteId!)).toMatchObject({matches:true,paymentActions:0});
   expect(hash((await ownedMission(owner,mission.id)).policy)).toBe(hash(mission.policy));
+  expect(await verifyCapturedQuote(result.quoteId!,provider)).toMatchObject({expected:{amount:'123.63',currency:'USD'},provider:{orderId:'FIXTUREORDER1',captureId:'FIXTURECAPTURE1',captureStatus:'COMPLETED',finalCapture:true,amount:'123.63',currency:'USD'}});
+  expect({creates,captures}).toEqual({creates:1,captures:1});
+});
+
+it('rejects denied approval and stale execution before any PayPal HTTP request',async()=>{
+  const owner=randomUUID();
+  const input={mission:'Microphone and headphones under $150 including charges.',maxTotal:15000,maxPurchases:1,maxQuantity:1,requiredCategories:['microphone','headphones'],expiresAt:new Date(Date.now()+3600_000).toISOString()};
+  const mission=await createMission(owner,input),mic=`lab-${randomUUID()}`,hp=`lab-${randomUUID()}`;
+  for(const [sku,category,price] of [[mic,'microphone',5900],[hp,'headphones',4900]] as const)await db().insertInto('products').values({sku,category,price,name:category,description:'Isolated stale-approval HTTP test',billing_type:'one_time',stock:5,tone:'sage',lab_owner_id:owner}).execute();
+  const transport=vi.fn(async()=>{throw new Error('Provider must not be contacted');});
+  const payment=new PayPalSandbox({baseUrl:'https://api-m.sandbox.paypal.com',clientId:'fixture-id',clientSecret:'fixture-secret'},transport);
+  const proposal={items:[{sku:mic,quantity:1},{sku:hp,quantity:1}]};
+  const deniedMission=await createMission(owner,{...input,maxTotal:10000});
+  const denied=await recordProposal(owner,deniedMission.id,proposal,'scripted');
+  await expect(approveBasket(owner,denied.quote.id,{policyHash:denied.decision.policyHash,quoteHash:denied.decision.quoteHash})).rejects.toThrow('BUDGET_EXCEEDED');
+  await expect(executePurchase(owner,denied.quote.id,payment)).rejects.toThrow('NOT_FOUND');
+  expect(await db().selectFrom('operations').selectAll().where('mission_id','=',deniedMission.id).execute()).toHaveLength(0);
+  const reviewed=await recordProposal(owner,mission.id,proposal,'scripted');
+  const approved=await approveBasket(owner,reviewed.quote.id,{policyHash:reviewed.decision.policyHash,quoteHash:reviewed.decision.quoteHash});
+  await db().updateTable('products').set({price:6000,version:2}).where('sku','=',mic).execute();
+  await expect(executePurchase(owner,approved.operationId,payment)).rejects.toThrow('APPROVAL_STALE');
+  expect(transport).not.toHaveBeenCalled();
+  expect((await ownedMission(owner,mission.id)).reserved).toBe(0);
 });

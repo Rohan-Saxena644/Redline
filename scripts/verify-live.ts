@@ -5,7 +5,7 @@ import { CompatibleModel } from '../apps/web/lib/agent';
 import { PayPalSandbox } from '@redline/paypal';
 import { livePrerequisites } from './live-prerequisites';
 const missing=livePrerequisites(process.env);
-const report:{timestamp:string;preflightPassed:boolean;journey:string;configuration:Record<string,unknown>;ai:Record<string,unknown>;paypal:Record<string,unknown>}={timestamp:new Date().toISOString(),preflightPassed:false,journey:'not_verified',configuration:{status:'valid'},ai:{status:'not_verified',missing:missing.ai},paypal:{status:'not_verified',missing:missing.paypal,buyerApproval:'not_verified',capture:'not_verified',webhookDelivery:'not_verified'}};
+const report:{timestamp:string;preflightPassed:boolean;journey:string;configuration:Record<string,unknown>;ai:Record<string,unknown>;paypal:Record<string,unknown>}={timestamp:new Date().toISOString(),preflightPassed:false,journey:'not_verified',configuration:{status:'valid',realServiceSettingsComplete:!missing.ai.length&&!missing.paypal.length},ai:{status:'not_verified',missing:missing.ai},paypal:{status:'not_verified',missing:missing.paypal,buyerApproval:'not_verified',capture:'not_verified',webhookDelivery:'not_verified'}};
 let c:ReturnType<typeof config>|undefined;
 try{c=config();}catch{report.configuration={status:'invalid',note:'Check .env.example and the missing configuration names. No service requests were made.'};}
 if(c&&!missing.ai.length){

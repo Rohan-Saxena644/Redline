@@ -25,6 +25,7 @@
     "reconcile": "tsx scripts/reconcile.ts",
     "verify:package": "node scripts/verify-package.mjs",
     "verify:live": "tsx scripts/verify-live.ts",
+    "verify:capture": "tsx scripts/verify-capture.ts",
     "submission:manifest": "node scripts/submission-manifest.mjs"
   },
   "dependencies": {
