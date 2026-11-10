@@ -1,9 +1,9 @@
 {
   "format": "redline-submission-candidate/1",
-  "recordedAt": "2026-11-10T13:26:37.681Z",
+  "recordedAt": "2026-11-10T16:16:41.530Z",
   "status": "local_candidate_not_submitted",
-  "sourceCommit": "42d264d4f71ca97c76c6093db4774e24ac7a0878",
-  "sourceTree": "4b57237301b2ba3c0bf97e07240bf557d24f2f26",
+  "sourceCommit": "f92c65511e46f01edfae6c9bcc429055d4158274",
+  "sourceTree": "b152d9d4ba566ae482894f2dff078138c9d4f99f",
   "applicationVersion": "0.1.0",
   "lockfile": {
     "path": "package-lock.json",
@@ -119,5 +119,5 @@
   },
   "accessContinuity": "docs/ACCESS_CONTINUITY.md",
   "preservationChecklist": "docs/SUBMISSION_FREEZE.md",
-  "note": "Source commit precedes this metadata-only manifest. No credentials, environment values, provider calls, external publication or freeze are performed."
+  "note": "Source commit precedes this metadata-only manifest. Null public locations describe an unbound local candidate, not a check for existing public repositories. No credentials, environment values, provider calls, external publication or freeze are performed."
 }
