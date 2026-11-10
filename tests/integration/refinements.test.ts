@@ -14,6 +14,23 @@ import {ownedEvidence} from '../../apps/web/lib/evidence';
 import {receipt,replay} from '../../apps/web/lib/receipts';
 import {proposeForReview,approveReviewedPurchase,finishApprovedCheckout,recoverPurchase} from '../../examples/host-integration';
 const input=()=>({mission:'Choose a microphone and headphones for streaming.',maxTotal:15000,maxPurchases:1,maxQuantity:1,requiredCategories:['microphone','headphones'],expiresAt:new Date(Date.now()+3600_000).toISOString()});
+it('requires a newly reviewed quote and fresh approval after a price change, then completes at the new total',async()=>{
+  const owner=randomUUID(),scenario=await runLab(owner,'price_change');
+  const old=await db().selectFrom('operations').selectAll().where('id','=',scenario.evidence.operationId!).executeTakeFirstOrThrow();
+  const quote=await db().selectFrom('quotes').selectAll().where('id','=',old.quote_id).executeTakeFirstOrThrow();
+  await expect(approveBasket(owner,quote.id,{policyHash:quote.decision.policyHash,quoteHash:quote.decision.quoteHash})).rejects.toThrow('APPROVAL_STALE');
+  expect((await executePurchase(owner,old.id)).state).toBe('CANCELLED');
+  expect(await db().selectFrom('simulated_orders').selectAll().execute()).toHaveLength(0);
+  const fresh=await recordProposal(owner,old.mission_id,quote.proposal,'scripted');
+  expect(fresh.decision.allowed).toBe(true);expect(fresh.quote.total).toBe(12471);
+  expect(fresh.decision.policyHash).toBe(quote.decision.policyHash);
+  await expect(approveBasket(owner,fresh.quote.id,{policyHash:fresh.decision.policyHash,quoteHash:quote.decision.quoteHash})).rejects.toThrow('APPROVAL_STALE');
+  const approved=await approveBasket(owner,fresh.quote.id,{policyHash:fresh.decision.policyHash,quoteHash:fresh.decision.quoteHash});
+  expect(approved.approvalId).not.toBe(old.approval_id);
+  await executePurchase(owner,approved.operationId);await simulateBuyerApproval(owner,approved.operationId);
+  expect((await capturePurchase(owner,approved.operationId)).state).toBe('COMPLETED');
+  expect((await ownedMission(owner,old.mission_id)).spent).toBe(12471);
+});
 beforeAll(async()=>{await migrate();await seed();});afterAll(closeDb);
 beforeEach(async()=>{await sql`TRUNCATE TABLE missions,simulated_orders CASCADE`.execute(db());await db().deleteFrom('products').where('lab_owner_id','is not',null).execute();await db().updateTable('products').set({stock:40,reserved:0}).where('lab_owner_id','is',null).where('sku','not in',['cove-wireless','hush-pro']).execute();});
 async function ready(){const owner=randomUUID(),mission=await createMission(owner,input());const r=await recordProposal(owner,mission.id,{items:[{sku:'loom-usb',quantity:1},{sku:'field-monitor',quantity:1}]},'fixture');const a=await approveBasket(owner,r.quote.id);return {owner,mission,r,...a};}

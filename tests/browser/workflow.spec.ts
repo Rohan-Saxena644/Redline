@@ -9,6 +9,14 @@ test('fixture journey: reject, repair, exact approval, simulated checkout, recei
   await page.getByRole('button',{name:'Generate proposal'}).click();
   await expect(page.getByText('This proposal crossed a red line.')).toBeVisible();await expect(page.getByText('BUDGET_EXCEEDED',{exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'Approve exact basket'})).toHaveCount(0);
+  const deniedState=await (await page.request.get('/api/state')).json();
+  const denied=deniedState.view.quotes.at(-1);
+  const refused=await page.request.post('/api/actions',{headers:{Origin:'http://localhost:3001'},data:{action:'basket.approve',quoteId:denied.id,policyHash:denied.decision.policyHash,quoteHash:denied.decision.quoteHash}});
+  expect(refused.status()).toBe(409);expect((await refused.json()).error).toBe('BUDGET_EXCEEDED');
+  const bypass=await page.request.post('/api/actions',{headers:{Origin:'http://localhost:3001'},data:{action:'payment.execute',operationId:denied.id}});
+  expect(bypass.status()).toBe(404);
+  const afterDenied=await (await page.request.get('/api/state')).json();
+  expect(afterDenied.view.operations).toHaveLength(0);expect(afterDenied.view.mission.reserved).toBe(0);
   await page.getByRole('button',{name:'Find an alternative'}).click();
   await expect(page.getByText('Within your red lines.')).toBeVisible();await expect(page.getByText('$123.63',{exact:true}).first()).toBeVisible();
   await expect(page.getByRole('region',{name:'Proposal repair comparison'})).toBeVisible();
