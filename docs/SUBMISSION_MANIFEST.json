@@ -1,9 +1,9 @@
 {
   "format": "redline-submission-candidate/1",
-  "recordedAt": "2026-11-10T16:16:41.530Z",
+  "recordedAt": "2026-11-10T20:29:32.736Z",
   "status": "local_candidate_not_submitted",
-  "sourceCommit": "f92c65511e46f01edfae6c9bcc429055d4158274",
-  "sourceTree": "b152d9d4ba566ae482894f2dff078138c9d4f99f",
+  "sourceCommit": "136af52ef8a62b98d07bb6ab77008458784ca745",
+  "sourceTree": "11291976c116826f95d858e65af8d0e555fa8b49",
   "applicationVersion": "0.1.0",
   "lockfile": {
     "path": "package-lock.json",
@@ -113,8 +113,11 @@
   "publicVideo": null,
   "verificationRecord": "docs/VERIFICATION.md",
   "liveVerification": {
-    "realModel": "not_verified",
-    "paypalSandboxCheckout": "not_verified",
+    "record": "docs/LIVE_VERIFICATION.md",
+    "reviewedOn": "2026-11-11",
+    "realModel": "verified",
+    "paypalSandboxCheckout": "backend_capture_verified",
+    "browserJourney": "not_verified_live",
     "webhookDelivery": "not_verified"
   },
   "accessContinuity": "docs/ACCESS_CONTINUITY.md",
