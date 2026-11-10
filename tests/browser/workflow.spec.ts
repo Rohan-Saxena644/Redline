@@ -9,6 +9,7 @@ test('fixture journey: reject, repair, exact approval, simulated checkout, recei
   await page.getByRole('button',{name:'Generate proposal'}).click();
   await expect(page.getByText('This proposal crossed a red line.')).toBeVisible();await expect(page.getByText('BUDGET_EXCEEDED',{exact:true})).toBeVisible();
   await expect(page.getByRole('button',{name:'Approve exact basket'})).toHaveCount(0);
+  await expect(page.getByText('Checkout blocked before payment',{exact:true})).toBeVisible();
   const deniedState=await (await page.request.get('/api/state')).json();
   const denied=deniedState.view.quotes.at(-1);
   const refused=await page.request.post('/api/actions',{headers:{Origin:'http://localhost:3001'},data:{action:'basket.approve',quoteId:denied.id,policyHash:denied.decision.policyHash,quoteHash:denied.decision.quoteHash}});
@@ -20,9 +21,20 @@ test('fixture journey: reject, repair, exact approval, simulated checkout, recei
   await page.getByRole('button',{name:'Find an alternative'}).click();
   await expect(page.getByText('Within your red lines.')).toBeVisible();await expect(page.getByText('$123.63',{exact:true}).first()).toBeVisible();
   await expect(page.getByRole('region',{name:'Proposal repair comparison'})).toBeVisible();
+  const repairSummary=page.locator('[aria-label="Repair price summary"]');
+  await expect(repairSummary).toContainText('Policy budget$150.00');
+  await expect(repairSummary).toContainText('Rejected total$156.03');
+  await expect(repairSummary).toContainText('Replacement total$123.63');
   await expect(page.getByText('A different basket. The same boundaries.')).toBeVisible();
   await expect(page.getByText('Policy v1 unchanged',{exact:true})).toBeVisible();
   await expect(page.getByText('Required microphone: satisfied',{exact:true})).toBeVisible();
+  const comparison=page.getByRole('region',{name:'Proposal repair comparison'});
+  await comparison.evaluate(element=>element.scrollIntoView({block:'start',behavior:'instant'}));
+  for(const locator of [repairSummary,comparison.locator('.comparison-baskets')]){
+    const box=await locator.boundingBox();expect(box).not.toBeNull();
+    expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.y+box!.height).toBeLessThanOrEqual(page.viewportSize()!.height);
+  }
+  await page.screenshot({path:`test-results/${testInfo.project.name}-repair-focus.png`});
   const accessibility=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
   expect(accessibility.violations.map(v=>({id:v.id,nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary}))}))).toEqual([]);
   await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
@@ -49,6 +61,7 @@ test('price-change scenario exposes exact approved/current terms and downloadabl
   await page.goto('/');await page.getByRole('button',{name:'Enter local workspace'}).click();await page.getByRole('button',{name:'Adversarial lab'}).click();await expect(page.getByText('No scenarios have been executed for this owner yet.')).toBeVisible();
   await page.getByRole('article').filter({hasText:'The moving price tag'}).getByRole('button',{name:'Run test'}).click();
   await expect(page.getByRole('heading',{name:'Previous approval is no longer valid.'})).toBeVisible();await expect(page.getByText(/unit price changed from/)).toBeVisible();
+  await expect(page.getByText('Checkout blocked before payment',{exact:true})).toBeVisible();
   const download=page.getByRole('link',{name:'Download evidence record'});await page.locator('.evidence-history summary').click();await expect(download).toBeVisible();
   const evidence=await (await page.request.get((await download.getAttribute('href'))!)).json();expect(evidence).toMatchObject({scenarioId:'price_change',inputMode:'scripted',providerUse:'not_called',matchedExpectation:true});expect(evidence.observed.termsReview.current.total).toBe(12471);expect(evidence.observed.termsReview.reviewed.total).toBe(12363);
   await page.reload();await page.getByRole('button',{name:'Adversarial lab'}).click();await expect(page.getByText('Evidence records',{exact:true})).toBeVisible();await expect(page.getByText('Expected result verified',{exact:true})).toBeVisible();
