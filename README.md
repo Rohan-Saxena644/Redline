@@ -38,6 +38,8 @@ The OpenAI-compatible structured action adapter and PayPal sandbox OAuth/create/
 
 The [submission review](docs/SUBMISSION_REVIEW.md) separates real PostgreSQL/server checks from model/PayPal HTTP fixtures, lists the exact manual access steps and explains the deferred regression export. After dependency installation, `npm run verify:package` reproduces the seeded $156.03 rejection offline without model, PayPal or database access; it is an existing SDK example, not an exported receipt fixture.
 
+For private credential locations, exact commands and manual buyer approval, use the [recording handoff](docs/RECORDING_HANDOFF.md). After completing a real-model/sandbox purchase, read `snapshot.quote.id` from its receipt and run `npm run verify:capture -- <quote UUID>`. This separate read-only check retrieves the same order from PayPal, verifies the binding and final capture, and reports exact expected/provider amount, currency, capture ID and status. Its redacted evidence stays in ignored `.local/`; it never creates or captures a payment. The `verify:live` report itself always leaves `journey: not_verified` because preflight does not observe checkout.
+
 ## Checks
 
 Create a dedicated test database once (never use the application database):

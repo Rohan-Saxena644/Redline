@@ -2,6 +2,8 @@
 
 ## Unreleased — 2026-11-10
 
+Recording follow-up: put budget/both totals and explicit SKU changes together in the repair view; show locally verified blocked-checkout outcomes; add a read-only independent sandbox-capture verification command using existing provider checks; document private credential/buyer handoff and exact recording clicks. Live access remains missing. Same-price swap is optional and unimplemented; regression export remains deferred.
+
 Fixed false-success live readiness checks and redacted reporting for incomplete sandbox settings. Added full model/PayPal HTTP-fixture adapter orchestration coverage, direct denied-checkout API checks and fresh approval after price changes. Prepared a one-mission 2:40 recording plan and submission review with exact access steps and explicit integration provenance. Real model/sandbox access remains absent; conditional receipt regression export is deferred. Publishing and submission remain manual.
 
 ## Unreleased — 2026-11-06

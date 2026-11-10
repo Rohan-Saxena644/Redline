@@ -24,7 +24,7 @@ const result={
   deployment:null,publicRepository:null,publicVideo:null,
   verificationRecord:'docs/VERIFICATION.md',liveVerification:{realModel:'not_verified',paypalSandboxCheckout:'not_verified',webhookDelivery:'not_verified'},
   accessContinuity:'docs/ACCESS_CONTINUITY.md',preservationChecklist:'docs/SUBMISSION_FREEZE.md',
-  note:'Source commit precedes this metadata-only manifest. No credentials, environment values, provider calls, external publication or freeze are performed.'
+  note:'Source commit precedes this metadata-only manifest. Null public locations describe an unbound local candidate, not a check for existing public repositories. No credentials, environment values, provider calls, external publication or freeze are performed.'
 };
 writeFileSync(resolve(root,'docs/SUBMISSION_MANIFEST.json'),JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify({file:'docs/SUBMISSION_MANIFEST.json',sourceCommit:result.sourceCommit,deployment:null,status:result.status}));
