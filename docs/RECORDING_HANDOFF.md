@@ -1,18 +1,18 @@
 # Private setup and recording handoff
 
-> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+> **November 11 update:** Real Groq inference and a buyer-approved PayPal sandbox capture passed. Independent provider GET confirmed $123.63 USD, COMPLETED, final capture. A fresh live UI rehearsal is still needed. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
 
-Live recording is **not ready** until both a real model mission and a buyer-approved PayPal sandbox capture have passed. The four starting commits are `1ff2f40`, `d57319b`, `42d264d`, `913b768`. A same-price swap was never implemented; it remains optional after live capture. Regression export stays deferred.
+The real model/backend capture gate **passed**. Rehearse a fresh mission through the browser’s own local session before recording the final take. The four starting commits are `1ff2f40`, `d57319b`, `42d264d`, `913b768`. A same-price swap was never implemented; it remains optional after live capture. Regression export stays deferred.
 
 ## What verify:live actually proves
 
 | Stage | Command/action | Evidence needed | Current result |
 | --- | --- | --- | --- |
-| Configuration | `npm run verify:live` parses app config and checks required fields/modes | Valid syntax plus no missing setting names | App defaults valid; real-service settings missing |
-| Real model response | Same command sends one structured `searchCatalog` request through CompatibleModel | Validated provider response/action, optional actual token usage | Not verified |
-| PayPal API access | Same command exchanges sandbox client ID/secret for an OAuth token | Successful authenticated token response | Not verified; OAuth alone proves neither merchant binding nor Orders permissions |
-| Real mission | Fresh browser mission runs catalogue/proposal tools and server evaluation | Actual proposal, quote charges and deterministic decision | Not verified |
-| Buyer-approved sandbox capture | Exact REDLINE approval → sandbox order → buyer login/approval → server capture → GET order | Exact USD amount, payee/items/charges and one final COMPLETED capture from PayPal | Not verified |
+| Configuration | `npm run verify:live` parses app config and checks required fields/modes | Valid syntax plus no missing setting names | Valid real/sandbox configuration; preflight passed |
+| Real model response | Same command sends one structured `searchCatalog` request through CompatibleModel | Validated provider response/action, optional actual token usage | Real backend run verified; live browser rehearsal pending |
+| PayPal API access | Same command exchanges sandbox client ID/secret for an OAuth token | Successful authenticated token response | Actual sandbox OAuth/create/retrieve passed; final capture independently verified |
+| Real mission | Existing backend agent/catalogue/evaluation services | Actual Groq proposal, quote charges and deterministic decision | Passed; fresh live browser mission still needs rehearsal |
+| Buyer-approved sandbox capture | Exact human basket approval → sandbox order → manual buyer approval → server capture → independent GET | Exact USD amount, payee/items/charges and one final COMPLETED capture from PayPal | Passed: $123.63 USD, COMPLETED, final capture; actual receipt saved privately |
 
 `preflightPassed: true` means the model structured-action and PayPal OAuth smoke checks passed. `journey: not_verified` in that report is deliberate: this command never creates an order, opens buyer checkout or captures. Missing/invalid/failed checks exit 1; nothing silently falls back to fixtures. It writes a redacted `.local/verification-latest.json`.
 
@@ -27,7 +27,7 @@ Open the ignored root `.env` in your local editor. A copy of `.env.example` was 
 | `AI_BASE_URL` | The approved provider's documented Chat Completions API base, normally ending `/v1`; **not** the final `/chat/completions` path |
 | `AI_MODEL` | Exact compatible model/deployment identifier from that approved provider's console/documentation |
 | `AI_API_KEY` | Private key from that provider's existing approved API-key console; required for a remote endpoint |
-| `AI_OUTPUT_MODE` | `json_schema`; use `json_object` only when explicitly required/supported by the approved endpoint |
+| `AI_OUTPUT_MODE` | Verified Groq GPT-OSS profile: `tool_calling`; JSON modes remain explicit alternatives for providers that support them |
 | `AI_ALLOW_LOCAL` | Keep `false` for remote access; `true` only for an already running, explicitly approved loopback model server |
 | `PAYMENT_MODE` | `sandbox` |
 | `PAYPAL_BASE_URL` | Keep `https://api-m.sandbox.paypal.com` |
@@ -38,7 +38,7 @@ Open the ignored root `.env` in your local editor. A copy of `.env.example` was 
 | `DATABASE_URL` | Keep the example's local PostgreSQL URL unless you deliberately use your own local database |
 | `DEV_LOGIN`, `LOCAL_LAB` | `true` for this loopback recording only |
 
-In the same Sandbox Accounts page, privately obtain a separate **personal buyer** account's email/password via View/Edit. You will type that into PayPal's sandbox checkout yourself, off camera. Merchant/app credentials remain server-only. See PayPal's [API setup](https://developer.paypal.com/api/rest) and [sandbox account guide](https://developer.paypal.com/sandbox-testing/accounts). Model-provider-specific console links depend on which access you approve; no provider or paid plan is selected for you.
+For the verified IN seller configuration, use a separate **US Personal sandbox buyer**. In Sandbox Accounts, create Personal → United States if needed. Privately obtain that buyer account's email/password via View/Edit. You will type that into PayPal's sandbox checkout yourself, off camera. Merchant/app credentials remain server-only. See PayPal's [API setup](https://developer.paypal.com/api/rest) and [sandbox account guide](https://developer.paypal.com/sandbox-testing/accounts). Model-provider-specific console links depend on which access you approve; no provider or paid plan is selected for you.
 
 ## Commands, in order (PowerShell)
 

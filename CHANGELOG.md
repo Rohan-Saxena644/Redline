@@ -2,7 +2,7 @@
 
 ## Unreleased — 2026-11-11
 
-Fixed Groq GPT-OSS compatibility with explicitly selected native catalogue/proposal tool calling, strict arguments, bound tool feedback, provider-specific reasoning settings and bounded quota waits. Real Groq inference and exact-basket PayPal sandbox order creation passed. Buyer-approved capture remains pending. Added current integration provenance; no fixture fallback, paid-tier upgrade or publication.
+Fixed Groq GPT-OSS compatibility with explicitly selected native catalogue/proposal tool calling, strict arguments, bound tool feedback, provider-specific reasoning settings and bounded quota waits. Real Groq inference, exact human approval and buyer-approved PayPal sandbox capture passed; the standalone verifier confirmed $123.63 USD, COMPLETED and final capture. Live browser rehearsal remains pending. Added current integration provenance; no fixture fallback, paid-tier upgrade or publication.
 
 ## Unreleased — 2026-11-10
 

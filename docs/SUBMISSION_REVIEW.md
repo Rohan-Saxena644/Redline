@@ -1,8 +1,8 @@
-# Submission review — November 10, 2026
+# Submission review — November 11, 2026
 
-> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+> **November 11 update:** Real Groq inference and a buyer-approved PayPal sandbox capture passed. Independent provider GET confirmed $123.63 USD, COMPLETED, final capture. A fresh live UI rehearsal is still needed. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
 
-**Live journey remains blocked on access.** No approved model endpoint/model/key or PayPal sandbox app/merchant credentials are configured. No live inference, PayPal OAuth, order creation, buyer approval, capture or webhook delivery was exercised. Publication, recording, upload and submission remain with the owner.
+**The real backend journey passed.** Actual Groq catalogue/proposal calls, server quote/evaluation, explicit exact-basket human approval, PayPal sandbox create, manual buyer approval, server capture and independent provider GET confirmed $123.63 USD, COMPLETED and final capture. A fresh live REDLINE browser rehearsal remains necessary; live webhook delivery is unverified. Publication, recording, upload and submission remain with the owner.
 
 ## Recording handoff follow-up
 
@@ -12,17 +12,19 @@ Denied proposals and structured stale-approval failures now display **Checkout b
 
 `verify:live` now also reports `configuration.realServiceSettingsComplete`, separating valid app defaults from completed real-service setup. It still checks only a single structured model response and PayPal OAuth, never checkout. The new `npm run verify:capture -- <quote UUID>` independently retrieves an already completed real-model/sandbox order, checks the immutable decision snapshots and existing provider binding, and compares exact amount/currency, final COMPLETED capture and capture ID with the settled operation. Its tested fixture path is not live PayPal evidence. It never creates or captures; reports stay in ignored `.local/`.
 
-The [private recording handoff](RECORDING_HANDOFF.md) lists exact fields, credential locations, commands and buyer actions. An ignored root `.env` was created from the empty template only because none existed; it contains no supplied secrets. No approved model identity or credentials have been provided. Current results remain separate: **configuration syntax valid / real settings incomplete; real model response unverified; PayPal OAuth/API access unverified; buyer-approved capture unverified**. Full recording cannot start yet; the labeled fixture opening can be rehearsed.
+The [private recording handoff](RECORDING_HANDOFF.md) lists exact fields, commands and buyer actions. Supplied credentials remain private in ignored `.env`. Current results: **configuration, real Groq mission, PayPal OAuth/create and buyer-approved capture all passed**. The verified account combination is an IN sandbox Business seller and a separate US Personal test buyer. The seller receiving preference was also changed. The first quote expired and was not extended: a new mission preserved the same purchasing constraints, kept its new policy fixed, obtained a real repair and fresh exact approval, and completed capture. The successful repair links directly to the scripted $156.03 opening with the same policy hash. Both replays match with zero payment actions.
 
-The previous same-price-swap prompt was never sent and no such feature is implemented. It remains conditional on live capture passing, with one short implementation pass at most. Regression export stays deferred. The SDK evidence continues to use the existing decision inspector, replay and `npm run verify:package`.
+The previous same-price-swap prompt was never sent and no such feature is implemented. It is deferred to preserve recording reliability while browser rehearsal remains pending. Regression export stays deferred. The SDK evidence continues to use the existing decision inspector, replay and `npm run verify:package`.
 
 Public repository check, November 10 at 16:15 UTC: [GitHub](https://github.com/Rohan-Saxena644/Redline) is accessible without authentication, but public main is still `c6b78b839905eec74bb11c1223107fc0750391bb`. README and MIT license return HTTP 200; root/SDK license and setup files exist, with no forbidden private/build artifact paths in its 79-file tree. Its README differs from this checkout and it lacks `verify:capture`. The original four starting commits and this follow-up are local: **the owner must review and push them** before judges receive this build. No push, publication or remote change was performed. The candidate manifest's null public location means the candidate has not been bound/published there; it is not evidence that the existing repository is absent.
 
-## First blocker and local fix
+## Original missing-access blocker — November 10 history
 
 The real workflow stops before its first model request because approved access is absent. A reproducible readiness defect also hid that blocker from automation: `npm run verify:live` printed missing settings but exited 0. It now exits 1 for missing, invalid or failed configuration, lists configuration names without values, and writes `.local/verification-latest.json` even when sandbox configuration is incomplete. Remote models require a server-only key; keyless loopback models require explicit local access approval. A successful preflight verifies only one structured model action and PayPal OAuth, never checkout.
 
-## One mission and verified behavior
+## Baseline fixture mission and verified behavior — November 10
+
+The table below records the prior fixture checks. November 11 adds actual Groq repair and verified PayPal sandbox capture for the same observed amounts; see [current live evidence](LIVE_VERIFICATION.md).
 
 Confirmed rules: microphone **and** headphones, USD $150 inclusive total, one-time purchases, one merchant, quantity/purchase limits. Replanning preserves the original policy hash/version.
 
@@ -43,11 +45,13 @@ The existing UI shows the rejected/revised baskets side by side, all charges, it
 | Browser completion | Desktop/mobile REDLINE → separate simulated buyer approval → simulated capture → receipt/reload | Durable local simulator, not PayPal sandbox |
 | Replay and offline consumer | Same decision snapshots replay with zero payment actions; packed public SDK consumer reproduces BUDGET_EXCEEDED | Seeded SDK fixture; no exported receipt regression |
 
-Current checks: **38 unit and 57 PostgreSQL integration tests passed**; all **12 browser cases** passed across the full run's ten unaffected cases and the corrected desktop/mobile journey rerun, including automated accessibility checks. Typecheck, lint, final production build and packed offline consumer passed. See [verification](VERIFICATION.md) for setup/build details and historical checks.
+Current checks: **42 unit and 59 PostgreSQL integration tests passed**; all **12 browser cases** passed across the full run's ten unaffected cases and the corrected desktop/mobile journey rerun, including automated accessibility checks. Typecheck, lint, final production build and packed offline consumer passed. See [verification](VERIFICATION.md) for setup/build details and historical checks.
 
 README rehearsal used fresh source archive `1ff2f40`, no copied dependencies/build output/private environment, an offline npm cache and an empty dedicated PostgreSQL database. Install, migrations, seed, typecheck, production build and optimized-server fixture checkout/replay passed. The exact `npm run dev` command also served readiness and REDLINE HTML with HTTP 200 on localhost:3000. It reused the same Windows/Node/Docker installation; a fresh operating system and uncached registry access were not tested. That rehearsal predates the comparison/capture-verifier polish; the dependency graph is unchanged and current-source build/tests passed separately. Temporary servers were stopped after verification; local source/database evidence remains private and ignored by Git.
 
-## Exact manual action to unblock the real journey
+## Setup and fresh browser rehearsal
+
+The backend live journey is now verified. Keep the existing configured private `.env`; do not overwrite it or create another seller. For the verified Groq GPT-OSS profile use `AI_OUTPUT_MODE=tool_calling`. Use the US Personal sandbox buyer, and start the recording mission through its own local browser session. Repeat the steps below for a fresh take; do not reuse the already captured operation.
 
 1. At the repository root, copy `.env.example` to private `.env` (PowerShell: `Copy-Item .env.example .env`; preserve any existing private file). Fill in an already authorized compatible model endpoint and explicit model: `AI_BASE_URL`, `AI_MODEL`, remote `AI_API_KEY`, `AI_MODE=real`, `AI_ACCESS_APPROVED=true`. An existing local server instead needs its actual URL/model and `AI_ALLOW_LOCAL=true`. No model, account, credits or paid plan was selected or provisioned.
 2. In the [PayPal developer dashboard](https://developer.paypal.com/dashboard/), select your authorized **sandbox** REST app. Privately copy its client ID/secret and the associated sandbox business account's merchant ID into `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_MERCHANT_ID`; set `PAYMENT_MODE=sandbox`. Have a separate authorized sandbox personal buyer login ready. Keep the sandbox base URL from the example. Do not paste secrets into chat or commit them.

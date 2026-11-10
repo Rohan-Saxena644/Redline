@@ -1,8 +1,8 @@
 # Verification record
 
-> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+> **November 11 update:** Real Groq inference and a buyer-approved PayPal sandbox capture passed. Independent provider GET confirmed $123.63 USD, COMPLETED, final capture. A fresh live UI rehearsal is still needed. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
 
-Latest submission verification: **2026-11-10 (Asia/Kolkata)**; earlier refinement verification November 6 and original implementation November 5. No secrets were printed or committed. This is a bounded local engineering verification record, not certification. The current journey/provenance and exact manual access steps are in [SUBMISSION_REVIEW.md](SUBMISSION_REVIEW.md).
+Latest submission verification: **2026-11-11 (Asia/Kolkata)**; earlier refinement verification November 6 and original implementation November 5. No secrets were printed or committed. This is a bounded local engineering verification record, not certification. The current journey/provenance and exact manual access steps are in [SUBMISSION_REVIEW.md](SUBMISSION_REVIEW.md).
 
 | Check | Actual evidence |
 | --- | --- |
@@ -10,8 +10,8 @@ Latest submission verification: **2026-11-10 (Asia/Kolkata)**; earlier refinemen
 | PostgreSQL | Real PostgreSQL 17 container via Docker Compose; app `redline` and isolated `redline_test` databases; all committed migrations and 24-product seed executed |
 | Type check | `npm run typecheck` passed |
 | Lint | `npm run lint` passed |
-| Unit suite | `npm test`: **38 passed** across portable policy/money, provider/model boundary, structured comparison and missing-access checks |
-| Integration suite | `npm run test:integration`: **57 passed** against real PostgreSQL; payment/model HTTP fixtures/test doubles explicitly injected; includes zero provider requests for denied/stale attempts, independent capture verification, fresh approval after price change, policy revision/races, repair/evidence and complete host integration |
+| Unit suite | `npm test`: **42 passed** across portable policy/money, provider/model boundary, structured comparison and missing-access checks |
+| Integration suite | `npm run test:integration`: **59 passed** against real PostgreSQL; payment/model HTTP fixtures/test doubles explicitly injected; includes zero provider requests for denied/stale attempts, independent capture verification, fresh approval after price change, policy revision/races, repair/evidence and complete host integration |
 | Browser suite | **12 cases passed** using installed Microsoft Edge, desktop and iPhone-sized Chromium emulation: ten cases in the full run plus two corrected journey reruns. Initial new title lookup and smooth-scroll measurement failures were corrected; final affected journeys pass. Fixture proposals and simulated payments; includes stale-tab policy revision, exact approval-change evidence and comparison budget/totals/items together in the viewport |
 | Accessibility | Axe WCAG 2 A/AA and 2.1 AA checks on welcome, policy editor, allowed purchase workspace, lab and developer views at desktop/mobile sizes; automated checks passed. This is not a complete manual accessibility audit |
 | Visual QA | Desktop/mobile screenshots inspected; responsive overflow checked in browser tests; original code-native vector product illustrations |
