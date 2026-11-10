@@ -36,6 +36,8 @@ The OpenAI-compatible structured action adapter and PayPal sandbox OAuth/create/
 
 `npm run verify:live` reports only configured checks: one approved structured model request and PayPal authentication. Missing settings, invalid configuration or failed checks return a nonzero exit code and a redacted report in `.local/verification-latest.json`. Even `preflightPassed: true` is only an access smoke check; `journey: not_verified` remains until you verify checkout in the browser. It does not silently switch modes, select a paid model, create a payment, capture, or configure a public webhook. To verify the real checkout vertical slice, set sandbox credentials and `PAYMENT_MODE=sandbox`, restart, and use the authenticated browser journey. Save its actual redacted receipt.
 
+The [submission review](docs/SUBMISSION_REVIEW.md) separates real PostgreSQL/server checks from model/PayPal HTTP fixtures, lists the exact manual access steps and explains the deferred regression export. After dependency installation, `npm run verify:package` reproduces the seeded $156.03 rejection offline without model, PayPal or database access; it is an existing SDK example, not an exported receipt fixture.
+
 ## Checks
 
 Create a dedicated test database once (never use the application database):

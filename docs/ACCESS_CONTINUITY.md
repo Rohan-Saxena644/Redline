@@ -1,6 +1,6 @@
 # Access continuity through the winner announcement
 
-Last reviewed **2026-11-06, Asia/Kolkata**. The project owner relayed an organizer email asking that demo access, test credentials and trials/credits remain active through December 21. The email itself was not accessed. The [official rules](https://paypalaihackathon.devpost.com/rules) currently place the announcement on or around **December 21, 2026, 2 PM Pacific** (**December 22, 3:30 AM IST**). Preserve access through the actual announcement, including any announced delay. This document does not assert that an unknown trial or quota will last.
+Last reviewed **2026-11-10, Asia/Kolkata**. Official rules rechecked November 10; live access remains absent. The project owner relayed an organizer email asking that demo access, test credentials and trials/credits remain active through December 21. The email itself was not accessed. The [official rules](https://paypalaihackathon.devpost.com/rules) currently place the announcement on or around **December 21, 2026, 2 PM Pacific** (**December 22, 3:30 AM IST**). Preserve access through the actual announcement, including any announced delay. This document does not assert that an unknown trial or quota will last.
 
 ## Actual dependencies and access status
 

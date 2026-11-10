@@ -1,6 +1,6 @@
 # Verification record
 
-Latest refinement verification: **2026-11-06 (Asia/Kolkata)**; original implementation verified November 5. No secrets were printed or committed. This is a bounded local engineering verification record, not certification.
+Latest submission verification: **2026-11-10 (Asia/Kolkata)**; earlier refinement verification November 6 and original implementation November 5. No secrets were printed or committed. This is a bounded local engineering verification record, not certification. The current journey/provenance and exact manual access steps are in [SUBMISSION_REVIEW.md](SUBMISSION_REVIEW.md).
 
 | Check | Actual evidence |
 | --- | --- |
@@ -8,15 +8,16 @@ Latest refinement verification: **2026-11-06 (Asia/Kolkata)**; original implemen
 | PostgreSQL | Real PostgreSQL 17 container via Docker Compose; app `redline` and isolated `redline_test` databases; all committed migrations and 24-product seed executed |
 | Type check | `npm run typecheck` passed |
 | Lint | `npm run lint` passed |
-| Unit suite | `npm test`: **36 passed** across portable policy/money, provider/model boundary and structured comparison tests |
-| Integration suite | `npm run test:integration`: **54 passed** against real PostgreSQL; payment/model test doubles explicitly injected; includes policy revision/races, repair/evidence and complete host integration |
+| Unit suite | `npm test`: **38 passed** across portable policy/money, provider/model boundary, structured comparison and missing-access checks |
+| Integration suite | `npm run test:integration`: **56 passed** against real PostgreSQL; payment/model test doubles explicitly injected; includes actual HTTP adapter paths, denied approval with zero checkout records, fresh approval after price change, policy revision/races, repair/evidence and complete host integration |
 | Browser suite | `npm run test:browser`: **12 passed** using installed Microsoft Edge, desktop and iPhone-sized Chromium emulation; fixture proposals and simulated payments; includes stale-tab policy revision and exact approval-change evidence |
 | Accessibility | Axe WCAG 2 A/AA and 2.1 AA checks on welcome, policy editor, allowed purchase workspace, lab and developer views at desktop/mobile sizes; automated checks passed. This is not a complete manual accessibility audit |
 | Visual QA | Desktop/mobile screenshots inspected; responsive overflow checked in browser tests; original code-native vector product illustrations |
 | Package archive | `npm run verify:package`: built SDK, locally packed archive, offline isolated consumer install, public ESM/CJS exports, TypeScript declarations and deterministic blocked replay passed; zero SDK runtime dependencies |
-| Production build | `npm run build` passed for SDK, PayPal adapter and Next.js application |
-| Optimized-server smoke | `npm run start -w @redline/web`: loopback readiness and page both returned HTTP 200; REDLINE HTML rendered; temporary server stopped after verification |
-| Dependency advisories | npm audit reported **0 vulnerabilities** after patched minimatch/esbuild overrides; advisory data is a point-in-time check |
+| Production build | `npm run build` passed for SDK, PayPal adapter and Next.js application in a fresh source archive at `1ff2f40`; subsequent source changes add tests/docs only |
+| Clean setup rehearsal | Fresh committed-source archive with no `.env`, `node_modules`, SDK dist or Next build output; `npm ci --offline` installed 229 packages from the existing local cache; copied `.env.example` with only local port/database adjustments; all four migrations and 24-product seed succeeded against empty `redline_clean_20261110_test`; fresh typecheck/build passed. README's exact `npm run dev` also returned health/page HTTP 200 with REDLINE HTML on localhost:3000. Same Windows/Node/Docker host, not a fresh OS or an uncached registry install |
+| Optimized-server smoke | Fresh optimized server on localhost:3002: readiness/page HTTP 200, then actual HTTP session → fixture rejection → same-policy repair → exact approval → simulated buyer approval/capture → redacted receipt → matched replay with zero payment actions. Private result `.local/clean-setup-result.json`; no live AI/PayPal request |
+| Dependency advisories | Historical November 5/6 npm audit reported **0 vulnerabilities** after patched minimatch/esbuild overrides; not rerun November 10; advisory data is a point-in-time check |
 | Docker application image | Dockerfile provided; image build/deployed container not verified |
 | Remote deployment | Not performed or authorized |
 
@@ -41,6 +42,16 @@ No sandbox client ID, client secret or merchant ID was supplied. OAuth authentic
 The current hackathon overview/rules/resources, PayPal Orders v2 endpoint docs and JSON specification, general idempotency reference, webhook verification docs, PayPal AI Toolkit, current Kysely migrations and official OpenAI Chat Completions schema were inspected. Links and consequences are recorded in `INTEGRATIONS.md`, `STATE_MACHINE.md` and `SUBMISSION_CHECKLIST.md`. Both payment mutations document request-ID support; the current endpoint references did not establish a retention duration. Automatic mutation retries are therefore disabled rather than assuming an undocumented safe window.
 
 Before submission: independently verify eligibility/current rules, complete actual AI/sandbox evidence, record a <3-minute working demo, authorize/publicize the repository/video if desired, and manually submit. Public deployment is optional under the checked rules. None of these publication/submission steps was performed.
+
+## November 10 submission checks
+
+The first actual service blocker is missing approved model access, before inference. PayPal credentials are also absent. Reproduced `verify:live` exiting 0 with both integrations missing; corrected it to exit 1 and preserve a redacted report. Both empty/default configuration and incomplete `PAYMENT_MODE=sandbox` configuration now return nonzero with missing names and no service requests. No real model or PayPal request occurred.
+
+`tests/integration/adapter-journey.test.ts` exercises the actual CompatibleModel and PayPalSandbox code with injected HTTP fixtures and real PostgreSQL: budget rejection, violation feedback, same-policy substitute, exact hash approval, OAuth parsing, minimal create followed by retrieval, separate buyer gate, capture followed by authoritative GET, exact final capture and payment-free replay. It is **not live inference or PayPal sandbox verification**; mode names in that isolated test select code paths only. Scripted provider data uses visibly fictitious FIXTURE order/capture IDs.
+
+Browser tests now send approval requests directly for a denied proposal (409 BUDGET_EXCEEDED), attempt checkout with its quote ID (404), and confirm zero operations/reserved funds. Price-change tests verify stale approval refusal, reject a new quote paired with the old reviewed hash, and require a new approval before simulated completion at $124.71 under the original policy. Both desktop/mobile browser journeys retain accurate fixture/simulator labels.
+
+The packed SDK consumer again reproduced the $156.03 BUDGET_EXCEEDED rejection at its fixed evaluation time without model, PayPal or PostgreSQL. The optional receipt-derived regression export is deferred because the required real journey has not yet passed. The 2:40 recording plan keeps rejection within 18 seconds and uses one mission through repair, exact approval, actual sandbox capture (pending access) and receipt replay.
 
 ## Refinement verification
 

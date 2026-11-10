@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — 2026-11-10
+
+Fixed false-success live readiness checks and redacted reporting for incomplete sandbox settings. Added full model/PayPal HTTP-fixture adapter orchestration coverage, direct denied-checkout API checks and fresh approval after price changes. Prepared a one-mission 2:40 recording plan and submission review with exact access steps and explicit integration provenance. Real model/sandbox access remains absent; conditional receipt regression export is deferred. Publishing and submission remain manual.
+
 ## Unreleased — 2026-11-06
 
 Added side-by-side constraint-preserving proposal repair, structured approval-term changes, explicit same-mission policy revisions with retained ledgers and stale-tab protection, persisted downloadable scenario evidence, and a complete host integration example using the existing execution service. Added access-continuity and preservation guidance, a 2:40 video script and a source/version submission-candidate manifest command. Real AI and PayPal sandbox checkout remain unverified without authorized access. No external publication, upload, submission or freeze was performed.
