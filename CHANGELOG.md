@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased — 2026-11-11
+
+Fixed Groq GPT-OSS compatibility with explicitly selected native catalogue/proposal tool calling, strict arguments, bound tool feedback, provider-specific reasoning settings and bounded quota waits. Real Groq inference and exact-basket PayPal sandbox order creation passed. Buyer-approved capture remains pending. Added current integration provenance; no fixture fallback, paid-tier upgrade or publication.
+
 ## Unreleased — 2026-11-10
 
 Recording follow-up: put budget/both totals and explicit SKU changes together in the repair view; show locally verified blocked-checkout outcomes; add a read-only independent sandbox-capture verification command using existing provider checks; document private credential/buyer handoff and exact recording clicks. Live access remains missing. Same-price swap is optional and unimplemented; regression export remains deferred.

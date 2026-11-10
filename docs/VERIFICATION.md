@@ -1,5 +1,7 @@
 # Verification record
 
+> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+
 Latest submission verification: **2026-11-10 (Asia/Kolkata)**; earlier refinement verification November 6 and original implementation November 5. No secrets were printed or committed. This is a bounded local engineering verification record, not certification. The current journey/provenance and exact manual access steps are in [SUBMISSION_REVIEW.md](SUBMISSION_REVIEW.md).
 
 | Check | Actual evidence |

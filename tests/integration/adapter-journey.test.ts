@@ -22,6 +22,25 @@ beforeEach(async()=>{
 });
 afterEach(()=>vi.unstubAllEnvs());afterAll(closeDb);
 
+it('preserves native tool-call IDs and authoritative catalogue feedback without exposing payment tools',async()=>{
+  vi.stubEnv('AI_OUTPUT_MODE','tool_calling');
+  const owner=randomUUID(),mission=await createMission(owner,{mission:'Microphone and headphones.',maxTotal:15000,maxPurchases:1,maxQuantity:1,requiredCategories:['microphone','headphones'],expiresAt:new Date(Date.now()+3600_000).toISOString()});
+  let calls=0;
+  const model=new CompatibleModel(async(_url,init)=>{
+    const body=JSON.parse(String(init?.body));calls++;
+    if(calls===2){
+      expect(body.messages.at(-2)).toMatchObject({role:'assistant',content:null,tool_calls:[{id:'catalog-call'}]});
+      expect(body.messages.at(-1)).toMatchObject({role:'tool',tool_call_id:'catalog-call'});
+      expect(JSON.parse(body.messages.at(-1).content).untrustedCatalogueData).toEqual(expect.arrayContaining([expect.objectContaining({sku:'loom-usb',price:5900})]));
+    }
+    const name=calls===1?'searchCatalog':'proposeBasket',args=calls===1?{query:'',category:'microphone'}:{items:[{sku:'loom-usb',quantity:1},{sku:'field-monitor',quantity:1}]};
+    return Response.json({choices:[{message:{content:null,tool_calls:[{id:calls===1?'catalog-call':'basket-call',type:'function',function:{name,arguments:JSON.stringify(args)}}]},finish_reason:'tool_calls'}]});
+  });
+  const result=await runAgent(owner,mission.id,false,false,model);
+  expect(result.status).toBe('allowed');expect(calls).toBe(2);expect((await receipt(owner,result.quoteId!)).snapshot.quote.total).toBe(12363);
+  expect(await db().selectFrom('operations').selectAll().where('mission_id','=',mission.id).execute()).toHaveLength(0);
+});
+
 it('runs model HTTP fixtures through rejection, fixed-policy repair, exact approval and capture HTTP fixtures',async()=>{
   const owner=randomUUID(),mission=await createMission(owner,{mission:'Choose a microphone and headphones for streaming.',maxTotal:15000,maxPurchases:1,maxQuantity:1,requiredCategories:['microphone','headphones'],expiresAt:new Date(Date.now()+3600_000).toISOString()});
   const prompts:string[]=[];

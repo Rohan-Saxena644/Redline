@@ -6,7 +6,7 @@ const schema=z.object({
   LOCAL_LAB:z.enum(['true','false']).default('true'), PAYPAL_BASE_URL:z.literal('https://api-m.sandbox.paypal.com').default('https://api-m.sandbox.paypal.com'),
   PAYPAL_CLIENT_ID:z.string().default(''),PAYPAL_CLIENT_SECRET:z.string().default(''),PAYPAL_MERCHANT_ID:z.string().default(''),PAYPAL_WEBHOOK_ID:z.string().default(''),
   AI_BASE_URL:z.string().default(''),AI_MODEL:z.string().default(''),AI_API_KEY:z.string().default(''), AI_ALLOW_LOCAL:z.enum(['true','false']).default('false'),
-  AI_ACCESS_APPROVED:z.enum(['true','false']).default('false'), AI_OUTPUT_MODE:z.enum(['json_schema','json_object']).default('json_schema'),AUTH_PROXY_SECRET:z.string().default('')
+  AI_ACCESS_APPROVED:z.enum(['true','false']).default('false'), AI_OUTPUT_MODE:z.enum(['json_schema','json_object','tool_calling']).default('json_schema'),AUTH_PROXY_SECRET:z.string().default('')
 });
 export function config() {
   const result=schema.safeParse(process.env);

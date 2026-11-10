@@ -1,5 +1,7 @@
 # Access continuity through the winner announcement
 
+> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+
 Last reviewed **2026-11-10, Asia/Kolkata**. Official rules rechecked November 10; live access remains absent. The project owner relayed an organizer email asking that demo access, test credentials and trials/credits remain active through December 21. The email itself was not accessed. The [official rules](https://paypalaihackathon.devpost.com/rules) currently place the announcement on or around **December 21, 2026, 2 PM Pacific** (**December 22, 3:30 AM IST**). Preserve access through the actual announcement, including any announced delay. This document does not assert that an unknown trial or quota will last.
 
 ## Actual dependencies and access status

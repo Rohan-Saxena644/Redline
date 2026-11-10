@@ -1,6 +1,8 @@
 # Recording plan — 2:40
 
-**Current gate:** local fixture/simulator journey passed; real model response, PayPal OAuth and buyer-approved sandbox capture remain unverified because private configuration is missing. The plan below distinguishes footage available now from live footage still required. Do not label the full submission recording ready until a real run and `verify:capture` pass.
+> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+
+**Current gate:** real Groq proposal and PayPal sandbox order creation passed through backend services. Buyer-approved capture and the live browser journey still need verification. The plan below distinguishes footage available now from live footage still required. Do not label the full submission recording ready until a real run and `verify:capture` pass.
 
 Use one mission: **microphone AND headphones, USD $150 inclusive of shipping/tax, one-time purchases, fixed policy v1**. Same-price swap is optional and **not implemented**; its prompt was never sent. Regression export stays deferred.
 
@@ -12,7 +14,7 @@ For a reproducible opening after access passes: Enter local workspace → Advers
 
 If the real model's first proposal is already valid, show that honest result in the run notes; do not describe the scripted opening as a model failure. If the actual real run contains its own rejection, you may use that observed rejection instead, with its own amount/source. Keep the recording's quote/operation IDs tied to the same run through capture and replay. Do not substitute fixture footage for the real checkout segment.
 
-Before the final take, write down the actual rejected/revised SKU names, subtotal, shipping, tax and final total from that run. $123.63 is the verified **seeded substitute**, not a promised real-model choice. Replace narration amounts with the recorded run's actual figures. An exhausted or rejected real repair remains a failure; never change policy silently.
+Before the final take, write down the actual rejected/revised SKU names, subtotal, shipping, tax and final total from that run. $123.63 was also observed in the November 11 real Groq proposal ($59 microphone + $49 headphones + $6.99 shipping + $8.64 tax); it is not a promised outcome for a new take. Replace narration amounts with the recorded run's actual figures. An exhausted or rejected real repair remains a failure; never change policy silently.
 
 | Time | Exact clicks / view | Narration | Required on-screen evidence |
 | --- | --- | --- | --- |

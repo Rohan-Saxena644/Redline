@@ -1,4 +1,4 @@
-import {beforeAll,beforeEach,afterAll,it,expect} from 'vitest';
+import {beforeAll,beforeEach,afterAll,it,expect,vi} from 'vitest';
 import {randomUUID} from 'node:crypto';
 import {sql} from 'kysely';
 import {hash} from '@redline/policy';
@@ -7,13 +7,24 @@ import {seed} from '../../scripts/seed';
 import {db,closeDb} from '../../apps/web/lib/db';
 import {createMission,reviseMission,ownedMission,recordProposal,AppError} from '../../apps/web/lib/domain';
 import {approveBasket,executePurchase,capturePurchase,simulateBuyerApproval,cancelPurchase} from '../../apps/web/lib/payments';
-import {runAgent} from '../../apps/web/lib/agent';
+import {runAgent,CompatibleModel,ModelError} from '../../apps/web/lib/agent';
 import {SimulatedProvider} from '../../apps/web/lib/simulator';
 import {runLab} from '../../apps/web/lib/lab';
 import {ownedEvidence} from '../../apps/web/lib/evidence';
 import {receipt,replay} from '../../apps/web/lib/receipts';
 import {proposeForReview,approveReviewedPurchase,finishApprovedCheckout,recoverPurchase} from '../../examples/host-integration';
 const input=()=>({mission:'Choose a microphone and headphones for streaming.',maxTotal:15000,maxPurchases:1,maxQuantity:1,requiredCategories:['microphone','headphones'],expiresAt:new Date(Date.now()+3600_000).toISOString()});
+it('waits only a bounded number of times for provider quota and never substitutes a fixture',async()=>{
+  const owner=randomUUID(),mission=await createMission(owner,input()),model=new CompatibleModel();
+  const invoke=vi.spyOn(model,'action').mockRejectedValue(new ModelError('MODEL_HTTP_429',1));
+  process.env.AI_MODE='real';
+  try{
+    await expect(runAgent(owner,mission.id,false,false,model)).rejects.toThrow('MODEL_HTTP_429');
+    expect(invoke).toHaveBeenCalledTimes(3);
+    expect(await db().selectFrom('events').select('id').where('mission_id','=',mission.id).where('kind','=','model_rate_wait').execute()).toHaveLength(2);
+    expect(await db().selectFrom('quotes').select('id').where('mission_id','=',mission.id).execute()).toHaveLength(0);
+  }finally{process.env.AI_MODE='fixture';}
+});
 it('requires a newly reviewed quote and fresh approval after a price change, then completes at the new total',async()=>{
   const owner=randomUUID(),scenario=await runLab(owner,'price_change');
   const old=await db().selectFrom('operations').selectAll().where('id','=',scenario.evidence.operationId!).executeTakeFirstOrThrow();

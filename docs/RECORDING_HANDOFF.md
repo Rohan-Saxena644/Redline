@@ -1,5 +1,7 @@
 # Private setup and recording handoff
 
+> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+
 Live recording is **not ready** until both a real model mission and a buyer-approved PayPal sandbox capture have passed. The four starting commits are `1ff2f40`, `d57319b`, `42d264d`, `913b768`. A same-price swap was never implemented; it remains optional after live capture. Regression export stays deferred.
 
 ## What verify:live actually proves

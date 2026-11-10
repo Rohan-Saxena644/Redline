@@ -1,5 +1,7 @@
 # Submission review — November 10, 2026
 
+> **November 11 update:** Real Groq inference and PayPal sandbox OAuth/order creation passed. Buyer-approved capture remains pending. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+
 **Live journey remains blocked on access.** No approved model endpoint/model/key or PayPal sandbox app/merchant credentials are configured. No live inference, PayPal OAuth, order creation, buyer approval, capture or webhook delivery was exercised. Publication, recording, upload and submission remain with the owner.
 
 ## Recording handoff follow-up
