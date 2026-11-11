@@ -1,18 +1,18 @@
 # Private setup and recording handoff
 
-> **November 11 update:** Real Groq inference and a buyer-approved PayPal sandbox capture passed. Independent provider GET confirmed $123.63 USD, COMPLETED, final capture. A fresh live UI rehearsal is still needed. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+> **Final recorded run, November 11:** The authenticated REDLINE browser journey passed with real Groq repair, exact human approval, manual sandbox buyer approval and server capture. Independent provider GET confirmed **$145.23 USD, COMPLETED, final capture**. The caption-only 2:40/1080p video passed full decode; sampled frames were reviewed, including the corrected 2:01 caption. See [current live evidence](LIVE_VERIFICATION.md). Older access and rehearsal statements below are historical.
 
-The real model/backend capture gate **passed**. Rehearse a fresh mission through the browser’s own local session before recording the final take. The four starting commits are `1ff2f40`, `d57319b`, `42d264d`, `913b768`. A same-price swap was never implemented; it remains optional after live capture. Regression export stays deferred.
+The real model/backend capture gate **passed**. The final browser take completed at $145.23 USD; use a fresh mission only if recording another take. The four starting commits are `1ff2f40`, `d57319b`, `42d264d`, `913b768`. A same-price swap was never implemented; it remains optional after live capture. Regression export stays deferred.
 
 ## What verify:live actually proves
 
 | Stage | Command/action | Evidence needed | Current result |
 | --- | --- | --- | --- |
 | Configuration | `npm run verify:live` parses app config and checks required fields/modes | Valid syntax plus no missing setting names | Valid real/sandbox configuration; preflight passed |
-| Real model response | Same command sends one structured `searchCatalog` request through CompatibleModel | Validated provider response/action, optional actual token usage | Real backend run verified; live browser rehearsal pending |
+| Real model response | Same command sends one structured `searchCatalog` request through CompatibleModel | Validated provider response/action, optional actual token usage | Real inference and recorded browser journey verified |
 | PayPal API access | Same command exchanges sandbox client ID/secret for an OAuth token | Successful authenticated token response | Actual sandbox OAuth/create/retrieve passed; final capture independently verified |
-| Real mission | Existing backend agent/catalogue/evaluation services | Actual Groq proposal, quote charges and deterministic decision | Passed; fresh live browser mission still needs rehearsal |
-| Buyer-approved sandbox capture | Exact human basket approval → sandbox order → manual buyer approval → server capture → independent GET | Exact USD amount, payee/items/charges and one final COMPLETED capture from PayPal | Passed: $123.63 USD, COMPLETED, final capture; actual receipt saved privately |
+| Real mission | Existing backend agent/catalogue/evaluation services | Actual Groq proposal, quote charges and deterministic decision | Passed through the authenticated browser session in the final take |
+| Buyer-approved sandbox capture | Exact human basket approval → sandbox order → manual buyer approval → server capture → independent GET | Exact USD amount, payee/items/charges and one final COMPLETED capture from PayPal | Passed: initial backend $123.63 USD and recorded browser $145.23 USD, COMPLETED/final; private receipts saved |
 
 `preflightPassed: true` means the model structured-action and PayPal OAuth smoke checks passed. `journey: not_verified` in that report is deliberate: this command never creates an order, opens buyer checkout or captures. Missing/invalid/failed checks exit 1; nothing silently falls back to fixtures. It writes a redacted `.local/verification-latest.json`.
 

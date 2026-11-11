@@ -1,8 +1,8 @@
 # Recording plan — 2:40
 
-> **November 11 update:** Real Groq inference and a buyer-approved PayPal sandbox capture passed. Independent provider GET confirmed $123.63 USD, COMPLETED, final capture. A fresh live UI rehearsal is still needed. The live run used backend services; the browser-control helper failed. See [current live evidence](LIVE_VERIFICATION.md) for provenance and remaining steps. Older missing-credential statements below describe earlier verification.
+> **Final recorded run, November 11:** The authenticated REDLINE browser journey passed with real Groq repair, exact human approval, manual sandbox buyer approval and server capture. Independent provider GET confirmed **$145.23 USD, COMPLETED, final capture**. The caption-only 2:40/1080p video passed full decode; sampled frames were reviewed, including the corrected 2:01 caption. See [current live evidence](LIVE_VERIFICATION.md). Older access and rehearsal statements below are historical.
 
-**Current gate:** real Groq proposal and PayPal sandbox order creation passed through backend services. Buyer-approved capture and independent capture verification passed. The live browser journey still needs rehearsal. The plan below distinguishes footage available now from live footage still required. The actual capture and `verify:capture` gate passed; do not claim a recorded live UI journey until that take is rehearsed.
+**Recorded outcome:** Full real browser journey and independent capture verification passed. Final take: scripted $156.03 rejection → real Groq $145.23 replacement → exact human approval → manual PayPal sandbox buyer approval → server capture → independent GET → receipt replay and seeded offline SDK proof. The 2:40 H.264/1080p video has captions only; buyer login and waiting are explicitly omitted. The plan below is retained as the planning reference.
 
 Use one mission: **microphone AND headphones, USD $150 inclusive of shipping/tax, one-time purchases, fixed policy v1**. Same-price swap is optional and **not implemented**; its prompt was never sent. Regression export stays deferred.
 

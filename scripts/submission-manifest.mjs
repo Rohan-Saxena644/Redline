@@ -22,7 +22,7 @@ const result={
   lockfile:{path:'package-lock.json',sha256:createHash('sha256').update(readFileSync(resolve(root,'package-lock.json'))).digest('hex')},
   runtime:{supported:rootPackage.engines,recordedNode:process.version},workspaces,externalConfiguration,
   deployment:null,publicRepository:null,publicVideo:null,
-  verificationRecord:'docs/VERIFICATION.md',liveVerification:{record:'docs/LIVE_VERIFICATION.md',reviewedOn:'2026-11-11',realModel:'verified',paypalSandboxCheckout:'backend_capture_verified',browserJourney:'not_verified_live',webhookDelivery:'not_verified'},
+  verificationRecord:'docs/VERIFICATION.md',liveVerification:{record:'docs/LIVE_VERIFICATION.md',reviewedOn:'2026-11-11',realModel:'verified',paypalSandboxCheckout:'buyer_approved_capture_verified',browserJourney:'verified_recorded',webhookDelivery:'not_verified'},
   accessContinuity:'docs/ACCESS_CONTINUITY.md',preservationChecklist:'docs/SUBMISSION_FREEZE.md',
   note:'Source commit precedes this metadata-only manifest. Null public locations describe an unbound local candidate, not a check for existing public repositories. No credentials, environment values, provider calls, external publication or freeze are performed.'
 };
